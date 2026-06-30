@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="הצוות">
+<title>הצוות של אבירם</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#f5f5f7;--card:#fff;--text:#1d1d1f;--text-2:#6e6e73;--text-3:#aeaeb2;
+  --border:#e5e5ea;--input-bg:#f5f5f7;--radius:18px;
+  --blue:#0071e3;--teal:#00897b;--amber:#c77b00;--purple:#7c3aed;--slate:#334155;
+  --blue-t:rgba(0,113,227,.1);--teal-t:rgba(0,137,123,.1);
+  --amber-t:rgba(199,123,0,.1);--purple-t:rgba(124,58,237,.1);--slate-t:rgba(51,65,85,.08);
+  --user-bubble:#0071e3;--asst-bg:#f0f0f2;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#000;--card:#1c1c1e;--text:#f5f5f7;--text-2:#98989d;--text-3:#48484a;
+  --border:#2c2c2e;--input-bg:#2c2c2e;
+  --blue:#409cff;--teal:#40c8a8;--amber:#ffd60a;--purple:#bf5af2;--slate:#94a3b8;
+  --blue-t:rgba(64,156,255,.12);--teal-t:rgba(64,200,168,.12);
+  --amber-t:rgba(255,214,10,.12);--purple-t:rgba(191,90,242,.12);--slate-t:rgba(148,163,184,.1);
+  --user-bubble:#0a84ff;--asst-bg:#2c2c2e;
+}}
+
+html{-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;
+  background:var(--bg);color:var(--text);min-height:100dvh;-webkit-font-smoothing:antialiased}
+
+/* ── HOME ── */
+.home{max-width:600px;margin:0 auto;padding:0 16px 48px}
+
+.header{padding:52px 4px 24px}
+.header-eyebrow{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+.header h1{font-size:clamp(28px,7vw,38px);font-weight:700;letter-spacing:-.03em;line-height:1.1}
+.header p{margin-top:8px;font-size:15px;color:var(--text-2)}
+
+/* ── NIR HERO CARD ── */
+.nir-card{
+  background:var(--card);border:1px solid var(--border);border-radius:22px;
+  padding:22px 20px;cursor:pointer;margin-bottom:16px;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .15s ease,opacity .15s ease;
+  position:relative;overflow:hidden;
+}
+.nir-card::before{
+  content:'';position:absolute;inset:0;border-radius:22px;
+  background:linear-gradient(135deg,rgba(51,65,85,.04) 0%,transparent 60%);
+  pointer-events:none;
+}
+.nir-card:active{transform:scale(0.98);opacity:.88}
+.nir-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.nir-avatar{
+  width:52px;height:52px;border-radius:16px;
+  background:var(--slate-t);color:var(--slate);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:700;flex-shrink:0;
+}
+.nir-name{font-size:18px;font-weight:700;color:var(--text)}
+.nir-title{font-size:13px;color:var(--text-2);margin-top:2px}
+.nir-desc{font-size:13px;color:var(--text-2);line-height:1.55;margin-bottom:14px}
+.nir-footer{display:flex;align-items:center;justify-content:space-between;
+  padding-top:12px;border-top:1px solid var(--border)}
+.nir-cta{font-size:14px;font-weight:600;color:var(--slate)}
+.nir-route{display:flex;gap:6px}
+.nir-dot{
+  width:24px;height:24px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;
+}
+.nd-blue  {background:var(--blue-t);  color:var(--blue)}
+.nd-teal  {background:var(--teal-t);  color:var(--teal)}
+.nd-amber {background:var(--amber-t); color:var(--amber)}
+.nd-purple{background:var(--purple-t);color:var(--purple)}
+
+/* ── SECTION LABEL ── */
+.section-label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-3);margin-bottom:10px}
+
+/* ── TEAM GRID ── */
+.team-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px}
+@media(max-width:380px){.team-grid{grid-template-columns:1fr}}
+
+.card{
+  background:var(--card);border-radius:var(--radius);padding:16px;cursor:pointer;
+  border:1px solid var(--border);-webkit-tap-highlight-color:transparent;
+  transition:transform .15s ease,opacity .15s ease;
+  display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;
+}
+.card:active{transform:scale(0.97);opacity:.85}
+.card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius) var(--radius) 0 0}
+.c-blue::after  {background:var(--blue)}
+.c-teal::after  {background:var(--teal)}
+.c-amber::after {background:var(--amber)}
+.c-purple::after{background:var(--purple)}
+
+.avatar{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;
+  justify-content:center;font-size:18px;font-weight:700}
+.c-blue   .avatar{background:var(--blue-t);  color:var(--blue)}
+.c-teal   .avatar{background:var(--teal-t);  color:var(--teal)}
+.c-amber  .avatar{background:var(--amber-t); color:var(--amber)}
+.c-purple .avatar{background:var(--purple-t);color:var(--purple)}
+
+.card-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:1px}
+.card-role{font-size:11px;color:var(--text-2);line-height:1.4}
+.card-footer{display:flex;align-items:center;justify-content:space-between;
+  padding-top:8px;border-top:1px solid var(--border);margin-top:auto}
+.card-cta{font-size:12px;font-weight:500}
+.c-blue   .card-cta{color:var(--blue)}
+.c-teal   .card-cta{color:var(--teal)}
+.c-amber  .card-cta{color:var(--amber)}
+.c-purple .card-cta{color:var(--purple)}
+.card-arrow{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px}
+.c-blue   .card-arrow{background:var(--blue-t);  color:var(--blue)}
+.c-teal   .card-arrow{background:var(--teal-t);  color:var(--teal)}
+.c-amber  .card-arrow{background:var(--amber-t); color:var(--amber)}
+.c-purple .card-arrow{background:var(--purple-t);color:var(--purple)}
+
+.footer{text-align:center;font-size:12px;color:var(--text-3);margin-top:8px}
+
+/* ── API KEY ── */
+.api-screen{display:none;position:fixed;inset:0;z-index:200;background:var(--bg);
+  align-items:center;justify-content:center;padding:32px 24px}
+.api-screen.visible{display:flex}
+.api-box{background:var(--card);border:1px solid var(--border);border-radius:20px;
+  padding:32px 28px;width:100%;max-width:420px}
+.api-box h2{font-size:20px;font-weight:700;margin-bottom:8px}
+.api-box p{font-size:14px;color:var(--text-2);margin-bottom:24px;line-height:1.5}
+.api-input{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--border);
+  background:var(--input-bg);color:var(--text);font-size:14px;font-family:monospace;
+  margin-bottom:16px;outline:none;direction:ltr;text-align:left}
+.api-input:focus{border-color:var(--blue)}
+.api-save{width:100%;padding:13px;border-radius:12px;background:var(--blue);
+  color:#fff;font-size:15px;font-weight:600;cursor:pointer;border:none}
+.api-link{font-size:12px;color:var(--text-3);margin-top:12px;display:block;text-align:center}
+.api-link a{color:var(--blue)}
+
+/* ── CHAT ── */
+.chat-overlay{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);flex-direction:column}
+.chat-overlay.open{display:flex}
+
+.chat-header{display:flex;align-items:center;gap:12px;padding:16px;
+  border-bottom:1px solid var(--border);background:var(--card);flex-shrink:0;
+  padding-top:max(16px,env(safe-area-inset-top))}
+.chat-back{width:36px;height:36px;border-radius:50%;background:var(--input-bg);border:none;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:18px;color:var(--text);flex-shrink:0}
+.chat-avatar-h{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;
+  justify-content:center;font-size:17px;font-weight:700;flex-shrink:0}
+.chat-header-info{flex:1}
+.chat-header-name{font-size:16px;font-weight:600}
+.chat-header-role{font-size:12px;color:var(--text-2)}
+.chat-clear{background:none;border:none;cursor:pointer;font-size:12px;color:var(--text-3);padding:8px}
+
+.chat-messages{flex:1;overflow-y:auto;padding:20px 16px;
+  display:flex;flex-direction:column;gap:14px;-webkit-overflow-scrolling:touch}
+
+.msg{display:flex;flex-direction:column;gap:3px;max-width:84%}
+.msg.user{align-self:flex-start;align-items:flex-start}
+.msg.assistant{align-self:flex-end;align-items:flex-end}
+
+/* routing pill */
+.routing-pill{
+  align-self:center;display:flex;align-items:center;gap:7px;
+  background:var(--input-bg);border:1px solid var(--border);
+  border-radius:100px;padding:6px 14px;font-size:12px;color:var(--text-2);
+  margin:4px 0;
+}
+.routing-name{font-weight:600}
+
+/* sender label above assistant bubble */
+.msg-label{font-size:11px;font-weight:600;color:var(--text-3);padding:0 4px;margin-bottom:1px}
+
+.bubble{padding:11px 15px;border-radius:18px;font-size:15px;line-height:1.6;
+  white-space:pre-wrap;word-break:break-word}
+.msg.user     .bubble{background:var(--asst-bg);color:var(--text);border-radius:18px 18px 18px 4px}
+.msg.assistant .bubble{background:var(--user-bubble);color:#fff;border-radius:18px 18px 4px 18px}
+.bubble img{max-width:100%;border-radius:10px;display:block;margin-top:6px}
+
+.typing-dot{display:inline-flex;gap:4px;align-items:center;padding:4px 2px}
+.typing-dot span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.6);animation:blink 1.2s infinite}
+.typing-dot span:nth-child(2){animation-delay:.2s}
+.typing-dot span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.3;transform:scale(.85)}40%{opacity:1;transform:scale(1)}}
+
+/* ── INPUT ── */
+.chat-input-area{background:var(--card);border-top:1px solid var(--border);
+  padding:10px 16px;padding-bottom:max(10px,env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.attachments-row{display:flex;gap:8px;flex-wrap:wrap}
+.attach-preview{position:relative;flex-shrink:0}
+.attach-preview img{width:60px;height:60px;object-fit:cover;border-radius:10px;
+  border:1px solid var(--border);display:block}
+.attach-file{width:60px;height:60px;border-radius:10px;border:1px solid var(--border);
+  background:var(--input-bg);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:2px}
+.attach-file span:first-child{font-size:20px}
+.attach-file span:last-child{font-size:9px;color:var(--text-2);max-width:54px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.attach-remove{position:absolute;top:-6px;right:-6px;width:18px;height:18px;
+  border-radius:50%;background:var(--text-2);color:var(--card);border:none;cursor:pointer;
+  font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.input-row{display:flex;gap:8px;align-items:flex-end}
+.attach-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);
+  background:var(--input-bg);cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-size:18px;flex-shrink:0;color:var(--text-2)}
+.chat-textarea{flex:1;padding:11px 14px;border-radius:22px;border:1px solid var(--border);
+  background:var(--input-bg);color:var(--text);font-size:15px;font-family:inherit;
+  resize:none;outline:none;max-height:120px;line-height:1.4;direction:rtl}
+.chat-textarea:focus{border-color:var(--blue)}
+.chat-send{width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
+  color:#fff;transition:opacity .15s}
+.chat-send:disabled{opacity:.4;cursor:default}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:calc(28px + env(safe-area-inset-bottom));left:50%;
+  transform:translateX(-50%) translateY(60px);background:rgba(29,29,31,.88);color:#fff;
+  font-size:14px;font-weight:500;padding:11px 22px;border-radius:100px;white-space:nowrap;
+  transition:transform .28s cubic-bezier(.34,1.56,.64,1),opacity .28s;
+  opacity:0;pointer-events:none;z-index:300}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+</style>
+</head>
+<body>
+
+<!-- API KEY -->
+<div class="api-screen" id="apiScreen">
+  <div class="api-box">
+    <h2>חיבור ל-Claude</h2>
+    <p>Enter your Anthropic API key once — saved only on your device.</p>
+    <input class="api-input" id="apiInput" type="password" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false">
+    <button class="api-save" onclick="saveKey()">התחבר</button>
+    <span class="api-link">Get a key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></span>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="home" id="homePage">
+  <header class="header">
+    <p class="header-eyebrow">R&D · ספקטרום אלקטרומגנטי</p>
+    <h1>הצוות של אבירם</h1>
+    <p>דבר עם ניר — הוא יידע למי לפנות</p>
+  </header>
+
+  <!-- NIR -->
+  <div class="nir-card" onclick="openChat('ניר')" role="button" tabindex="0">
+    <div class="nir-top">
+      <div class="nir-avatar">נ</div>
+      <div>
+        <div class="nir-name">ניר</div>
+        <div class="nir-title">מנהל הצוות</div>
+      </div>
+    </div>
+    <div class="nir-desc">שאל כל שאלה — ניר יחליט מי בצוות הכי מתאים לעזור ויעביר אליו ישירות.</div>
+    <div class="nir-footer">
+      <span class="nir-cta">שוחח עם ניר ↗</span>
+      <div class="nir-route">
+        <div class="nir-dot nd-blue">ד</div>
+        <div class="nir-dot nd-teal">מ</div>
+        <div class="nir-dot nd-amber">ע</div>
+        <div class="nir-dot nd-purple">ש</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="section-label">גישה ישירה</p>
+  <div class="team-grid">
+    <div class="card c-blue"   onclick="openChat('דניאל')" role="button" tabindex="0">
+      <div class="avatar">ד</div>
+      <div><div class="card-name">דניאל</div><div class="card-role">מהנדס RF ואלקטרוניקה</div></div>
+      <div class="card-footer"><span class="card-cta">שוחח</span><div class="card-arrow">↗</div></div>
+    </div>
+    <div class="card c-teal"   onclick="openChat('מיה')"   role="button" tabindex="0">
+      <div class="avatar">מ</div>
+      <div><div class="card-name">מיה</div><div class="card-role">עוזרת אישית</div></div>
+      <div class="card-footer"><span class="card-cta">שוחח</span><div class="card-arrow">↗</div></div>
+    </div>
+    <div class="card c-amber"  onclick="openChat('עמית')"  role="button" tabindex="0">
+      <div class="avatar">ע</div>
+      <div><div class="card-name">עמית</div><div class="card-role">איש רכש טכני</div></div>
+      <div class="card-footer"><span class="card-cta">שוחח</span><div class="card-arrow">↗</div></div>
+    </div>
+    <div class="card c-purple" onclick="openChat('שירה')"  role="button" tabindex="0">
+      <div class="avatar">ש</div>
+      <div><div class="card-name">שירה</div><div class="card-role">מהנדסת תוכנה</div></div>
+      <div class="card-footer"><span class="card-cta">שוחח</span><div class="card-arrow">↗</div></div>
+    </div>
+  </div>
+
+  <p class="footer">הצוות של אבירם · v5.0 · 2026</p>
+</div>
+
+<!-- CHAT -->
+<div class="chat-overlay" id="chatOverlay">
+  <div class="chat-header">
+    <button class="chat-back" onclick="closeChat()">←</button>
+    <div class="chat-avatar-h" id="chatAvatar"></div>
+    <div class="chat-header-info">
+      <div class="chat-header-name" id="chatName"></div>
+      <div class="chat-header-role" id="chatRole"></div>
+    </div>
+    <button class="chat-clear" onclick="clearChat()">נקה</button>
+  </div>
+  <div class="chat-messages" id="chatMessages"></div>
+  <div class="chat-input-area">
+    <div class="attachments-row" id="attachmentsRow"></div>
+    <div class="input-row">
+      <button class="attach-btn" onclick="document.getElementById('fileInput').click()" title="צרף קובץ">📎</button>
+      <input type="file" id="fileInput" accept="image/*,.pdf,.txt,.md,.csv,.py,.js,.json"
+        multiple style="display:none" onchange="handleFiles(this.files)">
+      <textarea class="chat-textarea" id="chatInput" placeholder="כתוב הודעה..." rows="1"
+        onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button class="chat-send" id="sendBtn" onclick="sendMessage()">↑</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const MEMBERS = {
+  דניאל:{role:'מהנדס RF ואלקטרוניקה',color:'blue',avatar:'ד',
+    system:`אתה דניאל, מהנדס RF ואלקטרוניקה בכיר (12 שנות ניסיון). חלק מצוות R&D של אבירם — חיישנים בספקטרום האלקטרומגנטי.
+מומחיות: LNA/PA/PLL/VCO/Mixer, אנטנות ו-phased array, impedance matching, DSP, SDR (USRP/HackRF/LimeSDR), ESM/ELINT, direction finding (MUSIC/ESPRIT/TDOA), PCB ל-RF, EMC/EMI.
+ענה בעברית, ישיר, עם מספרים ו-trade-offs.`},
+  מיה:{role:'עוזרת אישית',color:'teal',avatar:'מ',
+    system:`אתה מיה, עוזרת אישית של אבירם — מנהל R&D חיישנים.
+תחומים: לוז, תכנון, מיילים, מסמכים, סיכום פגישות, תרגום, מעקב משימות.
+ענה בעברית, קצר, עם צעד הבא ברור.`},
+  עמית:{role:'איש רכש טכני',color:'amber',avatar:'ע',
+    system:`אתה עמית, רכש טכני של הצוות של אבירם.
+מומחיות: רכיבי RF, VNA, ספקטרום אנלייזרים, SDR, Mouser/DigiKey/RS/Arrow, RFQ, ITAR/EAR, lead time.
+ענה בעברית, שאל על תקציב ודחיפות, הצג אפשרויות עם מחיר ו-trade-offs.`},
+  שירה:{role:'מהנדסת תוכנה',color:'purple',avatar:'ש',
+    system:`אתה שירה, מהנדסת תוכנה DSP בצוות של אבירם.
+מומחיות: Python/numpy/scipy, GNU Radio, SDR APIs, IQ/FFT/spectrogram, embedded Linux, C++ real-time.
+ענה בעברית, כתוב קוד עובד עם comments.`},
+  ניר:{role:'מנהל הצוות',color:'slate',avatar:'נ',
+    routingSystem:`אתה ניר, מנהל הצוות של אבירם (R&D חיישנים ספקטרום אלקטרומגנטי).
+הצוות שלך:
+- דניאל: RF/חומרה/אנטנות/DSP/SDR/ELINT — כל שאלה טכנית הנדסית
+- מיה: לוז/מיילים/מסמכים/תכנון/עזרה אישית — כל שאלה ניהולית-אדמיניסטרטיבית
+- עמית: רכש/ציוד/ספקים/RFQ/ITAR — כל שאלה הקשורה לרכישה
+- שירה: תוכנה/Python/GNU Radio/SDR/DSP code — כל שאלה תכנותית
+
+החלט מי הכי מתאים לשאלה זו. אם מדובר בכמה תחומים, בחר את הדומיננטי.
+ענה רק ב-JSON תקני, ללא טקסט נוסף:
+{"member":"[שם]","label":"[משפט קצר בעברית — מה השאלה ולמה מנתבים לשם]"}`}
+};
+
+const COLORS = {blue:'#0071e3',teal:'#00897b',amber:'#c77b00',purple:'#7c3aed',slate:'#334155'};
+const COLORS_DARK = {blue:'#409cff',teal:'#40c8a8',amber:'#ffd60a',purple:'#bf5af2',slate:'#94a3b8'};
+
+function getColor(c){
+  return window.matchMedia('(prefers-color-scheme:dark)').matches ? COLORS_DARK[c] : COLORS[c];
+}
+
+let currentMember=null, messages=[], pendingFiles=[], isStreaming=false;
+
+function getKey(){return localStorage.getItem('ant_key')}
+function saveKey(){
+  const k=document.getElementById('apiInput').value.trim();
+  if(!k.startsWith('sk-ant')){showToast('מפתח לא תקין');return}
+  localStorage.setItem('ant_key',k);
+  document.getElementById('apiScreen').classList.remove('visible');
+}
+function checkKey(){if(!getKey())document.getElementById('apiScreen').classList.add('visible')}
+
+function openChat(name,firstMsg){
+  if(!getKey()){checkKey();return}
+  currentMember=name; messages=[]; pendingFiles=[];
+  const m=MEMBERS[name];
+  document.getElementById('chatName').textContent=name;
+  document.getElementById('chatRole').textContent=m.role;
+  const av=document.getElementById('chatAvatar');
+  av.textContent=m.avatar;
+  av.style.background=`var(--${m.color}-t,var(--slate-t))`;
+  av.style.color=`var(--${m.color})`;
+  document.getElementById('sendBtn').style.background=getColor(m.color);
+  document.getElementById('chatMessages').innerHTML='';
+  document.getElementById('chatInput').value='';
+  document.getElementById('attachmentsRow').innerHTML='';
+  document.getElementById('chatOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+
+  const greeting = name==='ניר'
+    ? 'שלום אבירם! אני ניר. תספר לי מה צריך — אדאג שהאדם הנכון יטפל בזה.'
+    : `שלום אבירם! אני ${name}. במה אוכל לעזור?`;
+  addBubble('assistant',greeting,null);
+  messages.push({role:'assistant',content:greeting});
+
+  if(firstMsg){setTimeout(()=>{document.getElementById('chatInput').value=firstMsg;sendMessage()},300)}
+  else{setTimeout(()=>document.getElementById('chatInput').focus(),100)}
+}
+
+function closeChat(){
+  document.getElementById('chatOverlay').classList.remove('open');
+  document.body.style.overflow=''; pendingFiles=[];
+}
+function clearChat(){
+  messages=[];pendingFiles=[];
+  document.getElementById('chatMessages').innerHTML='';
+  document.getElementById('attachmentsRow').innerHTML='';
+  const name=currentMember;
+  const g=name==='ניר'?'שלום אבירם! אני ניר. תספר לי מה צריך — אדאג שהאדם הנכון יטפל בזה.':`שלום אבירם! אני ${name}. במה אוכל לעזור?`;
+  addBubble('assistant',g,null); messages.push({role:'assistant',content:g});
+}
+
+function addBubble(role,text,label){
+  const wrap=document.getElementById('chatMessages');
+  const msg=document.createElement('div'); msg.className=`msg ${role}`;
+  if(label){const l=document.createElement('div');l.className='msg-label';l.textContent=label;msg.appendChild(l)}
+  const b=document.createElement('div'); b.className='bubble'; b.textContent=text;
+  msg.appendChild(b); wrap.appendChild(msg); wrap.scrollTop=wrap.scrollHeight;
+  return b;
+}
+
+function addRoutingPill(label,member){
+  const wrap=document.getElementById('chatMessages');
+  const pill=document.createElement('div'); pill.className='routing-pill';
+  const color=MEMBERS[member]?.color||'blue';
+  pill.innerHTML=`<span>${label}</span><span style="color:var(--${color})" class="routing-name">→ ${member}</span>`;
+  wrap.appendChild(pill); wrap.scrollTop=wrap.scrollHeight;
+}
+
+function addTyping(){
+  const wrap=document.getElementById('chatMessages');
+  const d=document.createElement('div'); d.className='msg assistant';
+  d.innerHTML='<div class="bubble"><div class="typing-dot"><span></span><span></span><span></span></div></div>';
+  wrap.appendChild(d); wrap.scrollTop=wrap.scrollHeight; return d;
+}
+
+// Files
+function handleFiles(files){
+  Array.from(files).forEach(f=>{
+    const r=new FileReader(); const isImg=f.type.startsWith('image/');
+    r.onload=e=>{
+      const b64=e.target.result.split(',')[1];
+      pendingFiles.push({name:f.name,base64:b64,mediaType:f.type,isImage:isImg,preview:isImg?e.target.result:null});
+      renderAttachments();
+    }; r.readAsDataURL(f);
+  }); document.getElementById('fileInput').value='';
+}
+function renderAttachments(){
+  const row=document.getElementById('attachmentsRow'); row.innerHTML='';
+  pendingFiles.forEach((f,i)=>{
+    const w=document.createElement('div'); w.className='attach-preview';
+    if(f.isImage){const img=document.createElement('img');img.src=f.preview;w.appendChild(img)}
+    else{const b=document.createElement('div');b.className='attach-file';b.innerHTML=`<span>📄</span><span>${f.name}</span>`;w.appendChild(b)}
+    const rm=document.createElement('button');rm.className='attach-remove';rm.textContent='×';
+    rm.onclick=()=>{pendingFiles.splice(i,1);renderAttachments()};
+    w.appendChild(rm); row.appendChild(w);
+  });
+}
+
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}}
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px'}
+
+async function callClaude(systemPrompt, msgs, maxTokens=2048){
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'x-api-key':getKey(),'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true','content-type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:maxTokens,system:systemPrompt,messages:msgs,stream:true})
+  });
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`Error ${res.status}`)}
+  return res;
+}
+
+async function streamResponse(res,bubble){
+  const wrap=document.getElementById('chatMessages');
+  const reader=res.body.getReader(); const dec=new TextDecoder(); let full='';
+  while(true){
+    const{done,value}=await reader.read(); if(done)break;
+    const lines=dec.decode(value).split('\n');
+    for(const line of lines){
+      if(!line.startsWith('data: '))continue;
+      const data=line.slice(6).trim(); if(data==='[DONE]')continue;
+      try{const j=JSON.parse(data);if(j.type==='content_block_delta'&&j.delta?.text){full+=j.delta.text;bubble.textContent=full;wrap.scrollTop=wrap.scrollHeight}}catch{}
+    }
+  }
+  return full;
+}
+
+async function sendMessage(){
+  if(isStreaming)return;
+  const input=document.getElementById('chatInput');
+  const text=input.value.trim();
+  if(!text&&pendingFiles.length===0)return;
+  input.value=''; input.style.height='auto';
+
+  // User bubble
+  if(pendingFiles.length>0){
+    pendingFiles.forEach(f=>{
+      const wrap=document.getElementById('chatMessages');
+      const msg=document.createElement('div');msg.className='msg user';
+      const b=document.createElement('div');b.className='bubble';
+      if(f.isImage){const img=document.createElement('img');img.src=f.preview;b.appendChild(img)}
+      if(text||!f.isImage){const t=document.createElement('span');t.textContent=f.isImage?text:`📄 ${f.name}${text?'\n'+text:''}`;b.appendChild(t)}
+      msg.appendChild(b);wrap.appendChild(msg);wrap.scrollTop=wrap.scrollHeight;
+    });
+  } else { addBubble('user',text,null); }
+
+  // Build content
+  let content=[];
+  pendingFiles.forEach(f=>{
+    if(f.isImage)content.push({type:'image',source:{type:'base64',media_type:f.mediaType,data:f.base64}});
+    else content.push({type:'text',text:`[קובץ: ${f.name}]\n`});
+  });
+  if(text)content.push({type:'text',text});
+  if(content.length===1&&content[0].type==='text')content=content[0].text;
+  messages.push({role:'user',content});
+  document.getElementById('attachmentsRow').innerHTML=''; pendingFiles=[];
+
+  document.getElementById('sendBtn').disabled=true; isStreaming=true;
+
+  try{
+    if(currentMember==='ניר'){
+      await handleNirRouting(text,content);
+    } else {
+      const typing=addTyping();
+      const res=await callClaude(MEMBERS[currentMember].system,messages.slice(-20));
+      typing.remove();
+      const bubble=addBubble('assistant','',null);
+      const full=await streamResponse(res,bubble);
+      messages.push({role:'assistant',content:full});
+    }
+  }catch(e){
+    addBubble('assistant',`שגיאה: ${e.message}`,null);
+    if(e.message.includes('401')||e.message.includes('auth')){localStorage.removeItem('ant_key');setTimeout(checkKey,1000)}
+  }
+
+  isStreaming=false; document.getElementById('sendBtn').disabled=false;
+  document.getElementById('chatInput').focus();
+}
+
+async function handleNirRouting(text,content){
+  const wrap=document.getElementById('chatMessages');
+
+  // Step 1: routing decision (non-streaming, small)
+  const routingRes=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'x-api-key':getKey(),'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true','content-type':'application/json'},
+    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:100,
+      system:MEMBERS['ניר'].routingSystem,
+      messages:[{role:'user',content:text||'[תמונה/קובץ מצורף]'}]})
+  });
+  if(!routingRes.ok)throw new Error(`Routing error ${routingRes.status}`);
+  const routingData=await routingRes.json();
+  let routing={member:'דניאל',label:'מנתב לצוות'};
+  try{routing=JSON.parse(routingData.content[0].text.trim())}catch{}
+  const member=MEMBERS[routing.member]?routing.member:'דניאל';
+
+  // Show routing pill
+  addRoutingPill(routing.label,member);
+
+  // Step 2: expert answers (streaming)
+  const typing=addTyping();
+  const expertMsgs=[...messages.slice(-20)];
+
+  const expertRes=await callClaude(MEMBERS[member].system,expertMsgs);
+  typing.remove();
+  const bubble=addBubble('assistant','',member);
+  bubble.style.background=getColor(MEMBERS[member].color);
+  const full=await streamResponse(expertRes,bubble);
+  messages.push({role:'assistant',content:full});
+}
+
+function showToast(msg){
+  const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2000);
+}
+
+document.querySelectorAll('.card,.nir-card').forEach(c=>{
+  c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')c.click()});
+});
+
+checkKey();
+</script>
+</body>
+</html>
