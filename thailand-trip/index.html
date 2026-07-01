@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="טיול תאילנד">
+<title>הסוכן לטיול תאילנד</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#f5f5f7;--card:#fff;--text:#1d1d1f;--text-2:#6e6e73;--text-3:#aeaeb2;
+  --border:#e5e5ea;--input-bg:#f5f5f7;--radius:18px;
+  --green:#0d9268;--green-t:rgba(13,146,104,.1);--amber:#c77b00;--amber-t:rgba(199,123,0,.1);
+  --user-bubble:#0d9268;--asst-bg:#f0f0f2;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#000;--card:#1c1c1e;--text:#f5f5f7;--text-2:#98989d;--text-3:#48484a;
+  --border:#2c2c2e;--input-bg:#2c2c2e;
+  --green:#30d391;--green-t:rgba(48,211,145,.12);--amber:#ffd60a;--amber-t:rgba(255,214,10,.12);
+  --user-bubble:#22b57f;--asst-bg:#2c2c2e;
+}}
+
+html{-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;
+  background:var(--bg);color:var(--text);min-height:100dvh;-webkit-font-smoothing:antialiased}
+
+/* ── HOME ── */
+.home{max-width:600px;margin:0 auto;padding:0 16px 48px}
+
+.header{padding:52px 4px 24px}
+.header-eyebrow{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+.header h1{font-size:clamp(28px,7vw,38px);font-weight:700;letter-spacing:-.03em;line-height:1.1}
+.header p{margin-top:8px;font-size:15px;color:var(--text-2)}
+
+/* ── COUNTDOWN CARD ── */
+.trip-card{
+  background:var(--card);border:1px solid var(--border);border-radius:22px;
+  padding:22px 20px;margin-bottom:16px;position:relative;overflow:hidden;
+}
+.trip-card::before{
+  content:'';position:absolute;inset:0;border-radius:22px;
+  background:linear-gradient(135deg,rgba(13,146,104,.06) 0%,transparent 60%);
+  pointer-events:none;
+}
+.trip-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.trip-avatar{width:52px;height:52px;border-radius:16px;background:var(--green-t);color:var(--green);
+  display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.trip-days{font-size:26px;font-weight:700;color:var(--text)}
+.trip-days span{font-size:14px;font-weight:500;color:var(--text-2)}
+.trip-sub{font-size:13px;color:var(--text-2);margin-top:2px}
+.trip-desc{font-size:13px;color:var(--text-2);line-height:1.55;margin-bottom:14px}
+.trip-footer{display:flex;align-items:center;justify-content:space-between;
+  padding-top:12px;border-top:1px solid var(--border)}
+.trip-cta{font-size:14px;font-weight:600;color:var(--green);cursor:pointer;background:none;border:none;-webkit-tap-highlight-color:transparent}
+.trip-edit{font-size:12px;color:var(--text-3);cursor:pointer;background:none;border:none;-webkit-tap-highlight-color:transparent}
+
+/* ── SECTION LABEL ── */
+.section-label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-3);margin-bottom:10px}
+
+/* ── FACT GRID ── */
+.fact-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px}
+@media(max-width:380px){.fact-grid{grid-template-columns:1fr}}
+.fact{
+  background:var(--card);border-radius:var(--radius);padding:14px 16px;
+  border:1px solid var(--border);display:flex;flex-direction:column;gap:4px;
+}
+.fact-icon{font-size:18px}
+.fact-title{font-size:13px;font-weight:600;color:var(--text)}
+.fact-body{font-size:12px;color:var(--text-2);line-height:1.45}
+
+.footer{text-align:center;font-size:12px;color:var(--text-3);margin-top:8px}
+
+/* ── API KEY ── */
+.api-screen,.setup-screen{display:none;position:fixed;inset:0;z-index:200;background:var(--bg);
+  align-items:center;justify-content:center;padding:32px 24px;overflow-y:auto}
+.api-screen.visible,.setup-screen.visible{display:flex}
+.api-box,.setup-box{background:var(--card);border:1px solid var(--border);border-radius:20px;
+  padding:32px 28px;width:100%;max-width:420px;margin:auto}
+.api-box h2,.setup-box h2{font-size:20px;font-weight:700;margin-bottom:8px}
+.api-box p,.setup-box p{font-size:14px;color:var(--text-2);margin-bottom:24px;line-height:1.5}
+.api-input,.setup-input,.setup-select{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--border);
+  background:var(--input-bg);color:var(--text);font-size:14px;
+  margin-bottom:14px;outline:none}
+.api-input{font-family:monospace;direction:ltr;text-align:left}
+.setup-field-label{font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:6px;display:block}
+.setup-row{display:flex;gap:10px}
+.setup-row .setup-input{flex:1}
+.api-save,.setup-save{width:100%;padding:13px;border-radius:12px;background:var(--green);
+  color:#fff;font-size:15px;font-weight:600;cursor:pointer;border:none;margin-top:6px}
+.api-link{font-size:12px;color:var(--text-3);margin-top:12px;display:block;text-align:center}
+.api-link a{color:var(--green)}
+
+/* ── CHAT ── */
+.chat-overlay{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);flex-direction:column}
+.chat-overlay.open{display:flex}
+
+.chat-header{display:flex;align-items:center;gap:12px;padding:16px;
+  border-bottom:1px solid var(--border);background:var(--card);flex-shrink:0;
+  padding-top:max(16px,env(safe-area-inset-top))}
+.chat-back{width:36px;height:36px;border-radius:50%;background:var(--input-bg);border:none;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:18px;color:var(--text);flex-shrink:0}
+.chat-avatar-h{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;
+  justify-content:center;font-size:19px;flex-shrink:0;background:var(--green-t);color:var(--green)}
+.chat-header-info{flex:1}
+.chat-header-name{font-size:16px;font-weight:600}
+.chat-header-role{font-size:12px;color:var(--text-2)}
+.chat-clear{background:none;border:none;cursor:pointer;font-size:12px;color:var(--text-3);padding:8px}
+
+.chat-messages{flex:1;overflow-y:auto;padding:20px 16px;
+  display:flex;flex-direction:column;gap:14px;-webkit-overflow-scrolling:touch}
+
+.msg{display:flex;flex-direction:column;gap:3px;max-width:84%}
+.msg.user{align-self:flex-start;align-items:flex-start}
+.msg.assistant{align-self:flex-end;align-items:flex-end}
+
+.bubble{padding:11px 15px;border-radius:18px;font-size:15px;line-height:1.6;
+  white-space:pre-wrap;word-break:break-word}
+.msg.user     .bubble{background:var(--asst-bg);color:var(--text);border-radius:18px 18px 18px 4px}
+.msg.assistant .bubble{background:var(--user-bubble);color:#fff;border-radius:18px 18px 4px 18px}
+
+.typing-dot{display:inline-flex;gap:4px;align-items:center;padding:4px 2px}
+.typing-dot span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.6);animation:blink 1.2s infinite}
+.typing-dot span:nth-child(2){animation-delay:.2s}
+.typing-dot span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.3;transform:scale(.85)}40%{opacity:1;transform:scale(1)}}
+
+/* ── INPUT ── */
+.chat-input-area{background:var(--card);border-top:1px solid var(--border);
+  padding:10px 16px;padding-bottom:max(10px,env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.input-row{display:flex;gap:8px;align-items:flex-end}
+.chat-textarea{flex:1;padding:11px 14px;border-radius:22px;border:1px solid var(--border);
+  background:var(--input-bg);color:var(--text);font-size:15px;font-family:inherit;
+  resize:none;outline:none;max-height:120px;line-height:1.4;direction:rtl}
+.chat-textarea:focus{border-color:var(--green)}
+.chat-send{width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
+  color:#fff;background:var(--green);transition:opacity .15s}
+.chat-send:disabled{opacity:.4;cursor:default}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:calc(28px + env(safe-area-inset-bottom));left:50%;
+  transform:translateX(-50%) translateY(60px);background:rgba(29,29,31,.88);color:#fff;
+  font-size:14px;font-weight:500;padding:11px 22px;border-radius:100px;white-space:nowrap;
+  transition:transform .28s cubic-bezier(.34,1.56,.64,1),opacity .28s;
+  opacity:0;pointer-events:none;z-index:300}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+</style>
+</head>
+<body>
+
+<!-- API KEY -->
+<div class="api-screen" id="apiScreen">
+  <div class="api-box">
+    <h2>חיבור ל-Claude</h2>
+    <p>הכנס מפתח API של Anthropic פעם אחת — נשמר רק במכשיר שלך.</p>
+    <input class="api-input" id="apiInput" type="password" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false">
+    <button class="api-save" onclick="saveKey()">התחבר</button>
+    <span class="api-link">קבל מפתח ב-<a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></span>
+  </div>
+</div>
+
+<!-- TRIP SETUP -->
+<div class="setup-screen" id="setupScreen">
+  <div class="setup-box">
+    <h2>🏝️ פרטי הטיול</h2>
+    <p>כמה פרטים כדי שהסוכן יתאים את העצות אליכם — אפשר לערוך בכל שלב.</p>
+
+    <span class="setup-field-label">תאריך יציאה</span>
+    <input class="setup-input" id="setupStart" type="date">
+
+    <span class="setup-field-label">תאריך חזרה (אופציונלי)</span>
+    <input class="setup-input" id="setupEnd" type="date">
+
+    <span class="setup-field-label">עיר יציאה</span>
+    <input class="setup-input" id="setupCity" type="text" placeholder="תל אביב">
+
+    <span class="setup-field-label">גילאי ילדים (מופרד בפסיקים, אם יש)</span>
+    <input class="setup-input" id="setupKids" type="text" placeholder="לדוגמה: 4, 8">
+
+    <span class="setup-field-label">כמה מבוגרים</span>
+    <input class="setup-input" id="setupAdults" type="number" min="1" value="2">
+
+    <span class="setup-field-label">רמת תקציב</span>
+    <select class="setup-select" id="setupBudget">
+      <option value="חסכוני">חסכוני</option>
+      <option value="בינוני" selected>בינוני</option>
+      <option value="גבוה">גבוה / נוחות</option>
+    </select>
+
+    <span class="setup-field-label">הערות נוספות (אופציונלי)</span>
+    <input class="setup-input" id="setupNotes" type="text" placeholder="למשל: מעדיפים ים, לא אוהבים טיסות פנים">
+
+    <button class="setup-save" onclick="saveSetup()">שמור והתחל</button>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="home" id="homePage">
+  <header class="header">
+    <p class="header-eyebrow">🌴 טיול משפחתי</p>
+    <h1>תאילנד, בקרוב</h1>
+    <p>הסוכן האישי לתכנון הטיול שלכם</p>
+  </header>
+
+  <div class="trip-card">
+    <div class="trip-top">
+      <div class="trip-avatar">🧳</div>
+      <div>
+        <div class="trip-days" id="tripDays">— <span>ימים לטיול</span></div>
+        <div class="trip-sub" id="tripSub">עדיין לא הוגדרו פרטי טיול</div>
+      </div>
+    </div>
+    <div class="trip-desc">דברו עם טל, מומחה לתכנון טיולים משפחתיים לתאילנד — מסלול, טיסות, מלונות, תקציב, ויזה ופעילויות לילדים, מותאם בדיוק לתאריכים ולמשפחה שלכם.</div>
+    <div class="trip-footer">
+      <button class="trip-cta" onclick="openChat()">שוחח עם טל ↗</button>
+      <button class="trip-edit" onclick="openSetup()">ערוך פרטי טיול</button>
+    </div>
+  </div>
+
+  <p class="section-label">שווה לדעת</p>
+  <div class="fact-grid">
+    <div class="fact"><span class="fact-icon">🛂</span><span class="fact-title">ויזה</span>
+      <span class="fact-body">ישראלים פטורים מוויזה לשהייה קצרה. חשוב לוודא שהדרכון בתוקף ל-6 חודשים לפחות.</span></div>
+    <div class="fact"><span class="fact-icon">🌦️</span><span class="fact-title">מזג אוויר</span>
+      <span class="fact-body">אוגוסט הוא עונת הגשמים ברוב האזורים — לרוב ממטרים קצרים, לא רצוף. החוף המזרחי (קו סמוי) יבש יותר אז.</span></div>
+    <div class="fact"><span class="fact-icon">💱</span><span class="fact-title">מטבע</span>
+      <span class="fact-body">באט תאילנדי (THB). כדאי כרטיס אשראי ללא עמלות חו״ל + מזומן קטן לשווקים וטוקטוק.</span></div>
+    <div class="fact"><span class="fact-icon">🕐</span><span class="fact-title">שעון</span>
+      <span class="fact-body">תאילנד קדימה מישראל ב-5 שעות בקיץ (ללא שעון קיץ מקומי).</span></div>
+  </div>
+
+  <p class="footer">הסוכן לטיול תאילנד · v1.0</p>
+</div>
+
+<!-- CHAT -->
+<div class="chat-overlay" id="chatOverlay">
+  <div class="chat-header">
+    <button class="chat-back" onclick="closeChat()">←</button>
+    <div class="chat-avatar-h">🌴</div>
+    <div class="chat-header-info">
+      <div class="chat-header-name">טל</div>
+      <div class="chat-header-role">מתכנן טיול תאילנד</div>
+    </div>
+    <button class="chat-clear" onclick="clearChat()">נקה</button>
+  </div>
+  <div class="chat-messages" id="chatMessages"></div>
+  <div class="chat-input-area">
+    <div class="input-row">
+      <textarea class="chat-textarea" id="chatInput" placeholder="כתוב הודעה..." rows="1"
+        onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button class="chat-send" id="sendBtn" onclick="sendMessage()">↑</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY_STORAGE='thai_ant_key';
+const TRIP_STORAGE='thai_trip_info';
+const CHAT_STORAGE='thai_chat_history';
+
+let messages=[], isStreaming=false;
+
+function getKey(){return localStorage.getItem(KEY_STORAGE)}
+function saveKey(){
+  const k=document.getElementById('apiInput').value.trim();
+  if(!k.startsWith('sk-ant')){showToast('מפתח לא תקין');return}
+  localStorage.setItem(KEY_STORAGE,k);
+  document.getElementById('apiScreen').classList.remove('visible');
+  checkSetup();
+}
+function checkKey(){
+  if(!getKey()){document.getElementById('apiScreen').classList.add('visible');return false}
+  return true;
+}
+
+function getTrip(){
+  const raw=localStorage.getItem(TRIP_STORAGE);
+  return raw?JSON.parse(raw):null;
+}
+function checkSetup(){
+  if(!getKey())return;
+  if(!getTrip()){openSetup()}else{renderHome()}
+}
+function openSetup(){
+  const t=getTrip();
+  if(t){
+    document.getElementById('setupStart').value=t.start||'';
+    document.getElementById('setupEnd').value=t.end||'';
+    document.getElementById('setupCity').value=t.city||'';
+    document.getElementById('setupKids').value=t.kids||'';
+    document.getElementById('setupAdults').value=t.adults||2;
+    document.getElementById('setupBudget').value=t.budget||'בינוני';
+    document.getElementById('setupNotes').value=t.notes||'';
+  }
+  document.getElementById('setupScreen').classList.add('visible');
+}
+function saveSetup(){
+  const start=document.getElementById('setupStart').value;
+  if(!start){showToast('נא להזין תאריך יציאה');return}
+  const trip={
+    start,
+    end:document.getElementById('setupEnd').value,
+    city:document.getElementById('setupCity').value.trim()||'תל אביב',
+    kids:document.getElementById('setupKids').value.trim(),
+    adults:document.getElementById('setupAdults').value||2,
+    budget:document.getElementById('setupBudget').value,
+    notes:document.getElementById('setupNotes').value.trim()
+  };
+  localStorage.setItem(TRIP_STORAGE,JSON.stringify(trip));
+  document.getElementById('setupScreen').classList.remove('visible');
+  renderHome();
+}
+
+function renderHome(){
+  const t=getTrip();
+  if(!t)return;
+  const days=Math.ceil((new Date(t.start)-new Date(new Date().toDateString()))/86400000);
+  const daysEl=document.getElementById('tripDays');
+  if(days>0)daysEl.innerHTML=`${days} <span>ימים לטיול</span>`;
+  else if(days===0)daysEl.innerHTML=`היום! <span>יוצאים לדרך</span>`;
+  else daysEl.innerHTML=`בדרך <span>מקווים שנהנים!</span>`;
+
+  const parts=[];
+  parts.push(`יציאה מ-${t.city}`);
+  if(t.kids)parts.push(`ילדים בגילאי ${t.kids}`);
+  parts.push(`${t.adults} מבוגרים`);
+  document.getElementById('tripSub').textContent=parts.join(' · ');
+}
+
+function buildSystemPrompt(){
+  const t=getTrip()||{};
+  const days=t.start?Math.ceil((new Date(t.start)-new Date(new Date().toDateString()))/86400000):null;
+  let ctx=`פרטי המשפחה והטיול:\n- תאריך יציאה: ${t.start||'לא ידוע'}${days!==null?` (בעוד ${days} ימים)`:''}\n- תאריך חזרה: ${t.end||'לא צוין'}\n- עיר יציאה: ${t.city||'לא צוין'}\n- מבוגרים: ${t.adults||'לא צוין'}\n- ילדים: ${t.kids||'אין / לא צוין'}\n- רמת תקציב: ${t.budget||'לא צוין'}\n- הערות: ${t.notes||'אין'}`;
+
+  return `אתה טל, מומחה לתכנון טיולים משפחתיים לתאילנד. אתה עוזר למשפחה ספציפית שנתוני הטיול שלה מפורטים למטה — התאם את כל התשובות אליהם ואל תשאל שוב על פרטים שכבר סופקו.
+
+${ctx}
+
+הקשר עונתי: אם היציאה בסביבות אוגוסט — זו עונת הגשמים ("green season") ברוב האזורים, חוץ מהחוף המזרחי (קו סמוי/קו פנגן/קו טאו) שיחסית יבש אז.
+
+מומחיות: בניית מסלול יום-יום, טיסות (כולל טיסות פנים כמו AirAsia/Nok Air/Bangkok Airways), מלונות ואזורי לינה מתאימים למשפחות עם ילדים, תחבורה מקומית (Grab, רכבות, טוקטוק, טרנספר פרטי), אזורים מומלצים (בנגקוק, צ'אנג מאי, קרבי/פוקט, קו סמוי), תקציב יומי למשפחה (בהט ובשקלים), פעילויות לילדים (בריכות, ספארי, אקווריום, פארקי מים, שנורקלינג), אוכל בטוח לילדים, ביגוד וציוד לפי עונה, ויזה (ישראלים פטורים משהייה קצרה — לוודא תוקף דרכון 6 חודשים), ביטוח נסיעות, בריאות (חיסונים לרוב לא חובה, כדאי להתייעץ עם רופא נסיעות, ערכת תרופות, קרם הגנה, דוחה יתושים).
+
+ענה בעברית, מעשי וקונקרטי — הצע מסלול מובנה עם ימים ומקומות וטווחי מחירים כשרלוונטי.`;
+}
+
+function openChat(){
+  if(!checkKey())return;
+  if(!getTrip()){openSetup();return}
+  document.getElementById('chatOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+
+  const saved=localStorage.getItem(CHAT_STORAGE);
+  document.getElementById('chatMessages').innerHTML='';
+  if(saved){
+    messages=JSON.parse(saved);
+    messages.forEach(m=>addBubble(m.role,typeof m.content==='string'?m.content:'[קובץ מצורף]'));
+  } else {
+    greet();
+  }
+  setTimeout(()=>document.getElementById('chatInput').focus(),100);
+}
+function greet(){
+  const t=getTrip()||{};
+  const greeting=`שלום! אני טל. ראיתי שהטיול שלכם לתאילנד יוצא מ${t.city||'הבית'}${t.kids?` עם ילדים בגילאי ${t.kids}`:''} — איך אפשר לעזור? אפשר לבקש ממני מסלול מלא, עזרה עם טיסות/מלונות, או כל שאלה אחרת.`;
+  addBubble('assistant',greeting);
+  messages=[{role:'assistant',content:greeting}];
+  saveMessages();
+}
+
+function closeChat(){
+  document.getElementById('chatOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+function clearChat(){
+  localStorage.removeItem(CHAT_STORAGE);
+  document.getElementById('chatMessages').innerHTML='';
+  greet();
+}
+function saveMessages(){
+  localStorage.setItem(CHAT_STORAGE,JSON.stringify(messages.slice(-40)));
+}
+
+function addBubble(role,text){
+  const wrap=document.getElementById('chatMessages');
+  const msg=document.createElement('div'); msg.className=`msg ${role}`;
+  const b=document.createElement('div'); b.className='bubble'; b.textContent=text;
+  msg.appendChild(b); wrap.appendChild(msg); wrap.scrollTop=wrap.scrollHeight;
+  return b;
+}
+function addTyping(){
+  const wrap=document.getElementById('chatMessages');
+  const d=document.createElement('div'); d.className='msg assistant';
+  d.innerHTML='<div class="bubble"><div class="typing-dot"><span></span><span></span><span></span></div></div>';
+  wrap.appendChild(d); wrap.scrollTop=wrap.scrollHeight; return d;
+}
+
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}}
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px'}
+
+async function callClaude(systemPrompt,msgs,maxTokens=2048){
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'x-api-key':getKey(),'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true','content-type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:maxTokens,system:systemPrompt,messages:msgs,stream:true})
+  });
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`Error ${res.status}`)}
+  return res;
+}
+async function streamResponse(res,bubble){
+  const wrap=document.getElementById('chatMessages');
+  const reader=res.body.getReader(); const dec=new TextDecoder(); let full='';
+  while(true){
+    const{done,value}=await reader.read(); if(done)break;
+    const lines=dec.decode(value).split('\n');
+    for(const line of lines){
+      if(!line.startsWith('data: '))continue;
+      const data=line.slice(6).trim(); if(data==='[DONE]')continue;
+      try{const j=JSON.parse(data);if(j.type==='content_block_delta'&&j.delta?.text){full+=j.delta.text;bubble.textContent=full;wrap.scrollTop=wrap.scrollHeight}}catch{}
+    }
+  }
+  return full;
+}
+
+async function sendMessage(){
+  if(isStreaming)return;
+  const input=document.getElementById('chatInput');
+  const text=input.value.trim();
+  if(!text)return;
+  input.value=''; input.style.height='auto';
+
+  addBubble('user',text);
+  messages.push({role:'user',content:text});
+  saveMessages();
+
+  document.getElementById('sendBtn').disabled=true; isStreaming=true;
+  try{
+    const typing=addTyping();
+    const res=await callClaude(buildSystemPrompt(),messages.slice(-20));
+    typing.remove();
+    const bubble=addBubble('assistant','');
+    const full=await streamResponse(res,bubble);
+    messages.push({role:'assistant',content:full});
+    saveMessages();
+  }catch(e){
+    addBubble('assistant',`שגיאה: ${e.message}`);
+    if(e.message.includes('401')||e.message.includes('auth')){localStorage.removeItem(KEY_STORAGE);setTimeout(checkKey,1000)}
+  }
+  isStreaming=false; document.getElementById('sendBtn').disabled=false;
+  document.getElementById('chatInput').focus();
+}
+
+function showToast(msg){
+  const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2000);
+}
+
+checkKey();
+checkSetup();
+</script>
+</body>
+</html>
