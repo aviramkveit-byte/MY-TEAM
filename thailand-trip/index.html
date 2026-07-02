@@ -33,14 +33,19 @@
 
 html{-webkit-text-size-adjust:100%}
 body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;
-  background:var(--bg);color:var(--text);min-height:100dvh;-webkit-font-smoothing:antialiased}
+  background:var(--bg);color:var(--text);min-height:100dvh;-webkit-font-smoothing:antialiased;
+  overflow-x:hidden}
 
 /* ── APP SHELL ── */
-#app{display:none;flex-direction:column;height:100dvh}
+#app{display:none;flex-direction:column;height:100dvh;overflow-x:hidden}
 #app.visible{display:flex}
+.profile-bar{flex-shrink:0;display:flex;justify-content:flex-end;padding:10px 16px 0;max-width:600px;margin:0 auto;width:100%}
+.profile-pill{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);
+  border-radius:100px;padding:6px 14px;font-size:12.5px;color:var(--text);cursor:pointer;max-width:100%}
+.profile-pill span:first-of-type{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px}
 .page-wrap{flex:1;min-height:0;position:relative}
-.page{display:none;position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  flex-direction:column;padding:20px 16px 24px;max-width:600px;margin:0 auto;width:100%}
+.page{display:none;position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+  flex-direction:column;padding:20px 16px 24px;max-width:600px;margin:0 auto;width:100%;box-sizing:border-box}
 .page.active{display:flex}
 
 .tabbar{display:flex;flex-shrink:0;border-top:1px solid var(--border);
@@ -59,7 +64,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 
 /* ── TRIP CARD ── */
 .trip-card{background:var(--card);border:1px solid var(--border);border-radius:22px;
-  padding:22px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+  padding:22px 20px;margin-bottom:16px;position:relative;overflow:hidden;flex-shrink:0}
 .trip-card::before{content:'';position:absolute;inset:0;border-radius:22px;
   background:linear-gradient(135deg,rgba(13,146,104,.06) 0%,transparent 60%);pointer-events:none}
 .trip-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}
@@ -68,15 +73,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 .trip-days{font-size:26px;font-weight:700;color:var(--text)}
 .trip-days span{font-size:14px;font-weight:500;color:var(--text-2)}
 .trip-sub{font-size:13px;color:var(--text-2);margin-top:2px}
-.trip-footer{display:flex;align-items:center;justify-content:space-between;
+.trip-footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;
   padding-top:12px;border-top:1px solid var(--border)}
-.trip-edit{font-size:12px;color:var(--text-3);cursor:pointer;background:none;border:none;-webkit-tap-highlight-color:transparent}
+.trip-footer .teaser-text{flex:1 1 160px;min-width:0}
+.trip-edit{font-size:12px;color:var(--text-3);cursor:pointer;background:none;border:none;
+  flex-shrink:0;-webkit-tap-highlight-color:transparent}
 
 /* ── STAT TILES ── */
 .stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.stat-tile{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px}
+.stat-tile{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;min-width:0}
 .stat-label{font-size:12px;color:var(--text-2);margin-bottom:4px}
-.stat-value{font-size:22px;font-weight:600;color:var(--text)}
+.stat-value{font-size:22px;font-weight:600;color:var(--text);overflow-wrap:anywhere}
 .stat-value.critical{color:var(--critical)}
 
 /* ── SECTION LABEL ── */
@@ -95,6 +102,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 .teaser{display:flex;align-items:center;justify-content:space-between;gap:10px;
   background:var(--card);border:1px solid var(--border);border-radius:16px;
   padding:14px 16px;margin-bottom:12px;text-decoration:none;color:var(--text);cursor:pointer}
+.teaser>div,.teaser>.teaser-text{flex:1;min-width:0}
 .teaser-text{font-size:13px;color:var(--text-2)}
 .teaser-arrow{font-size:14px;color:var(--green);flex-shrink:0}
 
@@ -102,26 +110,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 .cat-list{background:var(--card);border:1px solid var(--border);border-radius:16px;
   padding:14px 16px;margin-bottom:16px;display:flex;flex-direction:column;gap:12px}
 .cat-empty{font-size:13px;color:var(--text-3);text-align:center;padding:6px}
-.cat-row{display:flex;align-items:center;gap:10px}
+.cat-row{display:flex;align-items:center;gap:8px}
 .cat-label{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text);
-  width:76px;flex-shrink:0}
+  white-space:nowrap;flex-shrink:0}
 .cat-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.cat-track{flex:1;height:10px;border-radius:5px;background:var(--input-bg);position:relative;overflow:hidden}
+.cat-track{flex:1;min-width:0;height:10px;border-radius:5px;background:var(--input-bg);position:relative;overflow:hidden}
 .cat-fill{position:absolute;inset:0 0 0 auto;height:100%;border-radius:5px;min-width:4px}
-.cat-amt{font-size:12px;color:var(--text-2);width:52px;text-align:left;flex-shrink:0;
+.cat-amt{font-size:12px;color:var(--text-2);text-align:left;flex-shrink:0;white-space:nowrap;
   font-variant-numeric:tabular-nums}
 
 /* ── EXPENSE FORM ── */
 .exp-form{background:var(--card);border:1px solid var(--border);border-radius:16px;
   padding:14px 16px;margin-bottom:16px;display:flex;flex-direction:column;gap:10px}
 .exp-row{display:flex;gap:8px}
-.exp-input,.exp-select{padding:10px 12px;border-radius:10px;border:1px solid var(--border);
+.exp-input,.exp-select{min-width:0;padding:10px 12px;border-radius:10px;border:1px solid var(--border);
   background:var(--input-bg);color:var(--text);font-size:14px;outline:none;font-family:inherit}
 .exp-input:focus,.exp-select:focus{border-color:var(--green)}
-.exp-amount{flex:1.2}
-.exp-currency{flex:.8}
-.exp-cat{flex:1}
-.exp-note{flex:1}
+.exp-amount{flex:1.2;min-width:0}
+.exp-currency{flex:1;min-width:0}
+.exp-cat{width:100%}
+.exp-note{flex:1;min-width:0}
 .exp-add-btn{padding:11px;border-radius:10px;background:var(--green);color:#fff;
   font-size:14px;font-weight:600;border:none;cursor:pointer}
 .fx-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-2)}
@@ -150,8 +158,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 .nearby-list{display:flex;flex-direction:column;gap:10px}
 .nearby-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px}
 .nearby-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.nearby-icon{font-size:17px}
-.nearby-name{font-size:14px;font-weight:600;color:var(--text)}
+.nearby-icon{font-size:17px;flex-shrink:0}
+.nearby-name{font-size:14px;font-weight:600;color:var(--text);min-width:0;overflow-wrap:anywhere}
 .nearby-reason{font-size:12.5px;color:var(--text-2);line-height:1.5;margin-bottom:8px}
 .nearby-link{font-size:12px;font-weight:600;color:var(--green);text-decoration:none}
 
@@ -174,6 +182,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
   color:#fff;font-size:15px;font-weight:600;cursor:pointer;border:none;margin-top:6px}
 .api-link{font-size:12px;color:var(--text-3);margin-top:12px;display:block;text-align:center}
 .api-link a{color:var(--green)}
+
+/* ── PROFILES ── */
+.profile-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.profile-row{display:flex;align-items:center;justify-content:space-between;gap:8px;
+  border:1px solid var(--border);border-radius:12px;padding:10px 12px}
+.profile-row.active{border-color:var(--green)}
+.profile-row-name{font-size:14px;color:var(--text);overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;min-width:0;flex:1}
+.profile-row-actions{display:flex;gap:4px;flex-shrink:0}
+.profile-row-actions button{background:var(--input-bg);border:none;border-radius:8px;
+  padding:6px 10px;font-size:12px;cursor:pointer;color:var(--text)}
+.profile-add-btn{width:100%;padding:11px;border-radius:12px;background:var(--input-bg);color:var(--text);
+  font-size:14px;font-weight:600;border:none;cursor:pointer;margin-bottom:8px}
+.profile-close-btn{width:100%;padding:11px;border-radius:12px;background:none;color:var(--text-2);
+  font-size:13px;border:none;cursor:pointer}
 
 /* ── CHAT ── */
 .chat-header{display:flex;align-items:center;gap:12px;padding-bottom:16px;margin-bottom:12px;
@@ -275,8 +298,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
   </div>
 </div>
 
+<!-- PROFILES (multi-family) -->
+<div class="setup-screen" id="profileScreen">
+  <div class="setup-box">
+    <h2>👪 משפחות</h2>
+    <p>כל משפחה מנהלת בנפרד את פרטי הטיול, ההוצאות והשיחה שלה, באותה אפליקציה.</p>
+    <div class="profile-list" id="profileList"></div>
+    <button class="profile-add-btn" onclick="addProfile()">➕ הוסף משפחה</button>
+    <button class="profile-close-btn" onclick="closeProfiles()">סגור</button>
+  </div>
+</div>
+
 <!-- APP -->
 <div id="app">
+  <div class="profile-bar">
+    <button class="profile-pill" onclick="openProfiles()">👪 <span id="profileName">משפחה</span> <span style="opacity:.6">▾</span></button>
+  </div>
   <div class="page-wrap">
 
     <!-- HOME -->
@@ -375,8 +412,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
             <option value="THB">฿ באט</option>
             <option value="ILS">₪ שקל</option>
           </select>
-          <select class="exp-select exp-cat" id="expCategory"></select>
         </div>
+        <select class="exp-select exp-cat" id="expCategory"></select>
         <input class="exp-input exp-note" id="expNote" type="text" placeholder="הערה (אופציונלי)">
         <button class="exp-add-btn" onclick="addExpense()">➕ הוסף הוצאה</button>
         <div class="fx-row">
@@ -418,11 +455,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 
 <script>
 const KEY_STORAGE='thai_ant_key';
+const PROFILES_STORAGE='thai_profiles';
+const ACTIVE_PROFILE_STORAGE='thai_active_profile';
 const TRIP_STORAGE='thai_trip_info';
 const CHAT_STORAGE='thai_chat_history';
 const EXPENSES_STORAGE='thai_expenses';
 const FX_STORAGE='thai_fx_rate';
 const NEARBY_STORAGE='thai_nearby_cache';
+const PROFILE_SCOPED_KEYS=[TRIP_STORAGE,CHAT_STORAGE,EXPENSES_STORAGE,FX_STORAGE,NEARBY_STORAGE];
 const DEFAULT_FX=0.11;
 
 const CATEGORIES=[
@@ -440,6 +480,93 @@ function escapeHtml(s){
   const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML;
 }
 
+/* ── PROFILES (multi-family) ── */
+function getProfiles(){return JSON.parse(localStorage.getItem(PROFILES_STORAGE)||'[]')}
+function saveProfiles(list){localStorage.setItem(PROFILES_STORAGE,JSON.stringify(list))}
+function getActiveProfileId(){return localStorage.getItem(ACTIVE_PROFILE_STORAGE)}
+function setActiveProfileId(id){localStorage.setItem(ACTIVE_PROFILE_STORAGE,id)}
+function scoped(base){return base+'__'+getActiveProfileId()}
+
+function ensureProfile(){
+  let profiles=getProfiles();
+  if(!profiles.length){
+    const id='p'+Date.now();
+    profiles=[{id,name:'המשפחה שלי'}];
+    saveProfiles(profiles);
+    setActiveProfileId(id);
+    // migrate pre-existing single-family data into the first profile
+    PROFILE_SCOPED_KEYS.forEach(base=>{
+      const v=localStorage.getItem(base);
+      if(v!=null){localStorage.setItem(base+'__'+id,v);localStorage.removeItem(base)}
+    });
+  } else if(!getActiveProfileId()||!profiles.some(p=>p.id===getActiveProfileId())){
+    setActiveProfileId(profiles[0].id);
+  }
+}
+function renderProfileBar(){
+  const list=getProfiles();
+  const active=list.find(p=>p.id===getActiveProfileId());
+  document.getElementById('profileName').textContent=active?active.name:'משפחה';
+}
+function openProfiles(){renderProfileList();document.getElementById('profileScreen').classList.add('visible')}
+function closeProfiles(){document.getElementById('profileScreen').classList.remove('visible')}
+function renderProfileList(){
+  const list=getProfiles(); const activeId=getActiveProfileId();
+  const wrap=document.getElementById('profileList'); wrap.innerHTML='';
+  list.forEach(p=>{
+    const row=document.createElement('div'); row.className='profile-row'+(p.id===activeId?' active':'');
+    row.innerHTML=`<span class="profile-row-name">${p.id===activeId?'✅ ':''}${escapeHtml(p.name)}</span>
+      <span class="profile-row-actions">
+        ${p.id===activeId?'':'<button onclick="switchProfile(\''+p.id+'\')">בחר</button>'}
+        <button onclick="renameProfile('${p.id}')">✏️</button>
+        ${list.length>1?`<button onclick="deleteProfile('${p.id}')">🗑️</button>`:''}
+      </span>`;
+    wrap.appendChild(row);
+  });
+}
+function addProfile(){
+  const name=prompt('שם המשפחה החדשה:');
+  if(!name||!name.trim())return;
+  const list=getProfiles();
+  const id='p'+Date.now();
+  list.push({id,name:name.trim()});
+  saveProfiles(list);
+  switchProfile(id,true);
+}
+function renameProfile(id){
+  const list=getProfiles(); const p=list.find(x=>x.id===id); if(!p)return;
+  const name=prompt('שם חדש:',p.name);
+  if(!name||!name.trim())return;
+  p.name=name.trim(); saveProfiles(list); renderProfileList(); renderProfileBar();
+}
+function deleteProfile(id){
+  let list=getProfiles();
+  if(list.length<=1){showToast('חייבת להישאר לפחות משפחה אחת');return}
+  if(!confirm('למחוק את המשפחה הזו? כל הנתונים שלה יימחקו לצמיתות.'))return;
+  PROFILE_SCOPED_KEYS.forEach(base=>localStorage.removeItem(base+'__'+id));
+  list=list.filter(p=>p.id!==id);
+  saveProfiles(list);
+  if(getActiveProfileId()===id){switchProfile(list[0].id)}else{renderProfileList()}
+}
+function switchProfile(id,isNew){
+  setActiveProfileId(id);
+  closeProfiles();
+  renderProfileBar();
+  chatInitialized=false;
+  document.getElementById('chatMessages').innerHTML='';
+  if(isNew||!getTrip()){
+    openSetup();
+  } else {
+    switchTab('home');
+    renderExpenses();
+    document.getElementById('fxRateInput').value=getFxRate();
+    document.getElementById('nearbyList').innerHTML='';
+    const cachedNearby=localStorage.getItem(scoped(NEARBY_STORAGE));
+    if(cachedNearby){try{renderNearby(JSON.parse(cachedNearby))}catch{}}
+    else setNearbyStatus('לחצו כדי לשתף מיקום ולקבל המלצות קרובות.');
+  }
+}
+
 /* ── KEY / SETUP ── */
 function getKey(){return localStorage.getItem(KEY_STORAGE)}
 function saveKey(){
@@ -447,6 +574,8 @@ function saveKey(){
   if(!k.startsWith('sk-ant')){showToast('מפתח לא תקין');return}
   localStorage.setItem(KEY_STORAGE,k);
   document.getElementById('apiScreen').classList.remove('visible');
+  ensureProfile();
+  renderProfileBar();
   checkSetup();
 }
 function checkKey(){
@@ -454,7 +583,7 @@ function checkKey(){
   return true;
 }
 function getTrip(){
-  const raw=localStorage.getItem(TRIP_STORAGE);
+  const raw=localStorage.getItem(scoped(TRIP_STORAGE));
   return raw?JSON.parse(raw):null;
 }
 function checkSetup(){
@@ -463,16 +592,14 @@ function checkSetup(){
 }
 function openSetup(){
   const t=getTrip();
-  if(t){
-    document.getElementById('setupStart').value=t.start||'';
-    document.getElementById('setupEnd').value=t.end||'';
-    document.getElementById('setupCity').value=t.city||'';
-    document.getElementById('setupKids').value=t.kids||'';
-    document.getElementById('setupAdults').value=t.adults||2;
-    document.getElementById('setupBudget').value=t.budget||'בינוני';
-    document.getElementById('setupBudgetTotal').value=t.budgetTotal||'';
-    document.getElementById('setupNotes').value=t.notes||'';
-  }
+  document.getElementById('setupStart').value=t?t.start||'':'';
+  document.getElementById('setupEnd').value=t?t.end||'':'';
+  document.getElementById('setupCity').value=t?t.city||'':'';
+  document.getElementById('setupKids').value=t?t.kids||'':'';
+  document.getElementById('setupAdults').value=t?t.adults||2:2;
+  document.getElementById('setupBudget').value=t?t.budget||'בינוני':'בינוני';
+  document.getElementById('setupBudgetTotal').value=t?t.budgetTotal||'':'';
+  document.getElementById('setupNotes').value=t?t.notes||'':'';
   document.getElementById('setupScreen').classList.add('visible');
 }
 function saveSetup(){
@@ -488,13 +615,14 @@ function saveSetup(){
     budgetTotal:document.getElementById('setupBudgetTotal').value||'',
     notes:document.getElementById('setupNotes').value.trim()
   };
-  localStorage.setItem(TRIP_STORAGE,JSON.stringify(trip));
+  localStorage.setItem(scoped(TRIP_STORAGE),JSON.stringify(trip));
   document.getElementById('setupScreen').classList.remove('visible');
   initApp();
 }
 
 function initApp(){
   document.getElementById('app').classList.add('visible');
+  renderProfileBar();
   const catSel=document.getElementById('expCategory');
   if(!catSel.options.length){
     CATEGORIES.forEach(c=>{
@@ -505,7 +633,7 @@ function initApp(){
   document.getElementById('fxRateInput').value=getFxRate();
   switchTab('home');
   renderExpenses();
-  const cachedNearby=localStorage.getItem(NEARBY_STORAGE);
+  const cachedNearby=localStorage.getItem(scoped(NEARBY_STORAGE));
   if(cachedNearby){try{renderNearby(JSON.parse(cachedNearby))}catch{}}
 }
 
@@ -538,14 +666,14 @@ function renderHome(){
 
 /* ── EXPENSES ── */
 function getExpenses(){
-  const raw=localStorage.getItem(EXPENSES_STORAGE);
+  const raw=localStorage.getItem(scoped(EXPENSES_STORAGE));
   return raw?JSON.parse(raw):[];
 }
-function saveExpenses(list){localStorage.setItem(EXPENSES_STORAGE,JSON.stringify(list))}
-function getFxRate(){return Number(localStorage.getItem(FX_STORAGE)||DEFAULT_FX)}
+function saveExpenses(list){localStorage.setItem(scoped(EXPENSES_STORAGE),JSON.stringify(list))}
+function getFxRate(){return Number(localStorage.getItem(scoped(FX_STORAGE))||DEFAULT_FX)}
 function saveFxRate(){
   const v=Number(document.getElementById('fxRateInput').value)||DEFAULT_FX;
-  localStorage.setItem(FX_STORAGE,v);
+  localStorage.setItem(scoped(FX_STORAGE),v);
   renderExpenses();
 }
 function toILS(amount,currency){return currency==='THB'?amount*getFxRate():amount}
@@ -673,7 +801,7 @@ function fetchNearby(force){
     try{
       const items=await getRecommendations(lat,lng,placeName);
       const data={placeName,lat,lng,items,ts:Date.now()};
-      localStorage.setItem(NEARBY_STORAGE,JSON.stringify(data));
+      localStorage.setItem(scoped(NEARBY_STORAGE),JSON.stringify(data));
       renderNearby(data);
     }catch(e){
       setNearbyStatus('שגיאה: '+e.message);
@@ -738,7 +866,7 @@ function buildSystemPrompt(){
     const budget=t.budgetTotal?Number(t.budgetTotal):null;
     ctx+=`\n\nהוצאות בפועל עד כה: ${formatILS(total)}${budget?` מתוך תקציב כולל ${formatILS(budget)} (${total>budget?'חריגה של '+formatILS(total-budget):'נותרו '+formatILS(budget-total)})`:''}.`;
   }
-  const cachedNearby=localStorage.getItem(NEARBY_STORAGE);
+  const cachedNearby=localStorage.getItem(scoped(NEARBY_STORAGE));
   if(cachedNearby){
     try{const c=JSON.parse(cachedNearby); ctx+=`\n\nהמיקום האחרון הידוע של המשפחה: ${c.placeName}.`}catch{}
   }
@@ -756,7 +884,7 @@ ${ctx}
 
 function initChat(){
   chatInitialized=true;
-  const saved=localStorage.getItem(CHAT_STORAGE);
+  const saved=localStorage.getItem(scoped(CHAT_STORAGE));
   document.getElementById('chatMessages').innerHTML='';
   if(saved){
     messages=JSON.parse(saved);
@@ -773,11 +901,11 @@ function greet(){
   saveMessages();
 }
 function clearChat(){
-  localStorage.removeItem(CHAT_STORAGE);
+  localStorage.removeItem(scoped(CHAT_STORAGE));
   document.getElementById('chatMessages').innerHTML='';
   greet();
 }
-function saveMessages(){localStorage.setItem(CHAT_STORAGE,JSON.stringify(messages.slice(-40)))}
+function saveMessages(){localStorage.setItem(scoped(CHAT_STORAGE),JSON.stringify(messages.slice(-40)))}
 
 function addBubble(role,text){
   const wrap=document.getElementById('chatMessages');
@@ -862,8 +990,7 @@ function showToast(msg){
   setTimeout(()=>el.classList.remove('show'),2000);
 }
 
-checkKey();
-checkSetup();
+if(checkKey()){ensureProfile();renderProfileBar();checkSetup()}
 </script>
 </body>
 </html>
