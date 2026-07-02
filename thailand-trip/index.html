@@ -15,68 +15,149 @@
 :root{
   --bg:#f5f5f7;--card:#fff;--text:#1d1d1f;--text-2:#6e6e73;--text-3:#aeaeb2;
   --border:#e5e5ea;--input-bg:#f5f5f7;--radius:18px;
-  --green:#0d9268;--green-t:rgba(13,146,104,.1);--amber:#c77b00;--amber-t:rgba(199,123,0,.1);
+  --green:#0d9268;--green-t:rgba(13,146,104,.1);
   --user-bubble:#0d9268;--asst-bg:#f0f0f2;
+  --critical:#d03b3b;
+  --cat-food:#2a78d6;--cat-transport:#1baf7a;--cat-stay:#eda100;
+  --cat-activities:#008300;--cat-shopping:#4a3aa7;--cat-other:#e34948;
 }
 @media(prefers-color-scheme:dark){:root{
   --bg:#000;--card:#1c1c1e;--text:#f5f5f7;--text-2:#98989d;--text-3:#48484a;
   --border:#2c2c2e;--input-bg:#2c2c2e;
-  --green:#30d391;--green-t:rgba(48,211,145,.12);--amber:#ffd60a;--amber-t:rgba(255,214,10,.12);
+  --green:#30d391;--green-t:rgba(48,211,145,.12);
   --user-bubble:#22b57f;--asst-bg:#2c2c2e;
+  --critical:#d03b3b;
+  --cat-food:#3987e5;--cat-transport:#199e70;--cat-stay:#c98500;
+  --cat-activities:#008300;--cat-shopping:#9085e9;--cat-other:#e66767;
 }}
 
 html{-webkit-text-size-adjust:100%}
 body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;
   background:var(--bg);color:var(--text);min-height:100dvh;-webkit-font-smoothing:antialiased}
 
-/* ── HOME ── */
-.home{max-width:600px;margin:0 auto;padding:0 16px 48px}
+/* ── APP SHELL ── */
+#app{display:none;flex-direction:column;height:100dvh}
+#app.visible{display:flex}
+.page-wrap{flex:1;min-height:0;position:relative}
+.page{display:none;position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  flex-direction:column;padding:20px 16px 24px;max-width:600px;margin:0 auto;width:100%}
+.page.active{display:flex}
 
-.header{padding:52px 4px 24px}
+.tabbar{display:flex;flex-shrink:0;border-top:1px solid var(--border);
+  background:var(--card);padding-bottom:env(safe-area-inset-bottom)}
+.tab-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:8px 4px 10px;background:none;border:none;cursor:pointer;
+  color:var(--text-3);font-size:10.5px;font-weight:600;-webkit-tap-highlight-color:transparent}
+.tab-btn .tab-icon{font-size:20px;line-height:1}
+.tab-btn.active{color:var(--green)}
+
+/* ── HEADER ── */
+.header{padding:16px 4px 20px}
 .header-eyebrow{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--green);margin-bottom:8px}
-.header h1{font-size:clamp(28px,7vw,38px);font-weight:700;letter-spacing:-.03em;line-height:1.1}
-.header p{margin-top:8px;font-size:15px;color:var(--text-2)}
+.header h1{font-size:clamp(24px,6vw,32px);font-weight:700;letter-spacing:-.03em;line-height:1.1}
+.header p{margin-top:8px;font-size:14px;color:var(--text-2)}
 
-/* ── COUNTDOWN CARD ── */
-.trip-card{
-  background:var(--card);border:1px solid var(--border);border-radius:22px;
-  padding:22px 20px;margin-bottom:16px;position:relative;overflow:hidden;
-}
-.trip-card::before{
-  content:'';position:absolute;inset:0;border-radius:22px;
-  background:linear-gradient(135deg,rgba(13,146,104,.06) 0%,transparent 60%);
-  pointer-events:none;
-}
+/* ── TRIP CARD ── */
+.trip-card{background:var(--card);border:1px solid var(--border);border-radius:22px;
+  padding:22px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+.trip-card::before{content:'';position:absolute;inset:0;border-radius:22px;
+  background:linear-gradient(135deg,rgba(13,146,104,.06) 0%,transparent 60%);pointer-events:none}
 .trip-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}
 .trip-avatar{width:52px;height:52px;border-radius:16px;background:var(--green-t);color:var(--green);
   display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
 .trip-days{font-size:26px;font-weight:700;color:var(--text)}
 .trip-days span{font-size:14px;font-weight:500;color:var(--text-2)}
 .trip-sub{font-size:13px;color:var(--text-2);margin-top:2px}
-.trip-desc{font-size:13px;color:var(--text-2);line-height:1.55;margin-bottom:14px}
 .trip-footer{display:flex;align-items:center;justify-content:space-between;
   padding-top:12px;border-top:1px solid var(--border)}
-.trip-cta{font-size:14px;font-weight:600;color:var(--green);cursor:pointer;background:none;border:none;-webkit-tap-highlight-color:transparent}
 .trip-edit{font-size:12px;color:var(--text-3);cursor:pointer;background:none;border:none;-webkit-tap-highlight-color:transparent}
+
+/* ── STAT TILES ── */
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stat-tile{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px}
+.stat-label{font-size:12px;color:var(--text-2);margin-bottom:4px}
+.stat-value{font-size:22px;font-weight:600;color:var(--text)}
+.stat-value.critical{color:var(--critical)}
 
 /* ── SECTION LABEL ── */
 .section-label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
   color:var(--text-3);margin-bottom:10px}
 
 /* ── FACT GRID ── */
-.fact-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px}
+.fact-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
 @media(max-width:380px){.fact-grid{grid-template-columns:1fr}}
-.fact{
-  background:var(--card);border-radius:var(--radius);padding:14px 16px;
-  border:1px solid var(--border);display:flex;flex-direction:column;gap:4px;
-}
+.fact{background:var(--card);border-radius:var(--radius);padding:14px 16px;
+  border:1px solid var(--border);display:flex;flex-direction:column;gap:4px}
 .fact-icon{font-size:18px}
 .fact-title{font-size:13px;font-weight:600;color:var(--text)}
 .fact-body{font-size:12px;color:var(--text-2);line-height:1.45}
 
+.teaser{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:14px 16px;margin-bottom:12px;text-decoration:none;color:var(--text);cursor:pointer}
+.teaser-text{font-size:13px;color:var(--text-2)}
+.teaser-arrow{font-size:14px;color:var(--green);flex-shrink:0}
+
+/* ── CATEGORY BREAKDOWN (bar list) ── */
+.cat-list{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:14px 16px;margin-bottom:16px;display:flex;flex-direction:column;gap:12px}
+.cat-empty{font-size:13px;color:var(--text-3);text-align:center;padding:6px}
+.cat-row{display:flex;align-items:center;gap:10px}
+.cat-label{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text);
+  width:76px;flex-shrink:0}
+.cat-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.cat-track{flex:1;height:10px;border-radius:5px;background:var(--input-bg);position:relative;overflow:hidden}
+.cat-fill{position:absolute;inset:0 0 0 auto;height:100%;border-radius:5px;min-width:4px}
+.cat-amt{font-size:12px;color:var(--text-2);width:52px;text-align:left;flex-shrink:0;
+  font-variant-numeric:tabular-nums}
+
+/* ── EXPENSE FORM ── */
+.exp-form{background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:14px 16px;margin-bottom:16px;display:flex;flex-direction:column;gap:10px}
+.exp-row{display:flex;gap:8px}
+.exp-input,.exp-select{padding:10px 12px;border-radius:10px;border:1px solid var(--border);
+  background:var(--input-bg);color:var(--text);font-size:14px;outline:none;font-family:inherit}
+.exp-input:focus,.exp-select:focus{border-color:var(--green)}
+.exp-amount{flex:1.2}
+.exp-currency{flex:.8}
+.exp-cat{flex:1}
+.exp-note{flex:1}
+.exp-add-btn{padding:11px;border-radius:10px;background:var(--green);color:#fff;
+  font-size:14px;font-weight:600;border:none;cursor:pointer}
+.fx-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-2)}
+.fx-row input{width:64px;padding:6px 8px;border-radius:8px;border:1px solid var(--border);
+  background:var(--input-bg);color:var(--text);font-size:12px;outline:none}
+
+/* ── EXPENSE LIST ── */
+.exp-list{display:flex;flex-direction:column;gap:8px}
+.exp-item{display:flex;align-items:center;gap:10px;background:var(--card);
+  border:1px solid var(--border);border-radius:14px;padding:11px 14px}
+.exp-icon{font-size:18px;flex-shrink:0}
+.exp-mid{flex:1;min-width:0}
+.exp-cat-name{font-size:13px;font-weight:600;color:var(--text)}
+.exp-note-text{font-size:12px;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.exp-right{text-align:left;flex-shrink:0}
+.exp-sum{font-size:13px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
+.exp-date{font-size:11px;color:var(--text-3)}
+.exp-del{background:none;border:none;color:var(--text-3);font-size:14px;cursor:pointer;padding:4px 2px;flex-shrink:0}
+
+/* ── NEARBY ── */
+.nearby-actions{display:flex;gap:8px;margin-bottom:14px}
+.nearby-btn{flex:1;padding:13px;border-radius:12px;background:var(--green);color:#fff;
+  font-size:14px;font-weight:600;border:none;cursor:pointer}
+.nearby-btn.secondary{flex:none;padding:13px 16px;background:var(--input-bg);color:var(--text)}
+.nearby-status{font-size:12.5px;color:var(--text-2);margin-bottom:14px;line-height:1.5}
+.nearby-list{display:flex;flex-direction:column;gap:10px}
+.nearby-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px}
+.nearby-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.nearby-icon{font-size:17px}
+.nearby-name{font-size:14px;font-weight:600;color:var(--text)}
+.nearby-reason{font-size:12.5px;color:var(--text-2);line-height:1.5;margin-bottom:8px}
+.nearby-link{font-size:12px;font-weight:600;color:var(--green);text-decoration:none}
+
 .footer{text-align:center;font-size:12px;color:var(--text-3);margin-top:8px}
 
-/* ── API KEY ── */
+/* ── API KEY / SETUP ── */
 .api-screen,.setup-screen{display:none;position:fixed;inset:0;z-index:200;background:var(--bg);
   align-items:center;justify-content:center;padding:32px 24px;overflow-y:auto}
 .api-screen.visible,.setup-screen.visible{display:flex}
@@ -86,26 +167,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 .api-box p,.setup-box p{font-size:14px;color:var(--text-2);margin-bottom:24px;line-height:1.5}
 .api-input,.setup-input,.setup-select{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--border);
   background:var(--input-bg);color:var(--text);font-size:14px;
-  margin-bottom:14px;outline:none}
+  margin-bottom:14px;outline:none;font-family:inherit}
 .api-input{font-family:monospace;direction:ltr;text-align:left}
 .setup-field-label{font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:6px;display:block}
-.setup-row{display:flex;gap:10px}
-.setup-row .setup-input{flex:1}
 .api-save,.setup-save{width:100%;padding:13px;border-radius:12px;background:var(--green);
   color:#fff;font-size:15px;font-weight:600;cursor:pointer;border:none;margin-top:6px}
 .api-link{font-size:12px;color:var(--text-3);margin-top:12px;display:block;text-align:center}
 .api-link a{color:var(--green)}
 
 /* ── CHAT ── */
-.chat-overlay{display:none;position:fixed;inset:0;z-index:100;background:var(--bg);flex-direction:column}
-.chat-overlay.open{display:flex}
-
-.chat-header{display:flex;align-items:center;gap:12px;padding:16px;
-  border-bottom:1px solid var(--border);background:var(--card);flex-shrink:0;
-  padding-top:max(16px,env(safe-area-inset-top))}
-.chat-back{width:36px;height:36px;border-radius:50%;background:var(--input-bg);border:none;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  font-size:18px;color:var(--text);flex-shrink:0}
+.chat-header{display:flex;align-items:center;gap:12px;padding-bottom:16px;margin-bottom:12px;
+  border-bottom:1px solid var(--border);flex-shrink:0}
 .chat-avatar-h{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;
   justify-content:center;font-size:19px;flex-shrink:0;background:var(--green-t);color:var(--green)}
 .chat-header-info{flex:1}
@@ -113,10 +185,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 .chat-header-role{font-size:12px;color:var(--text-2)}
 .chat-clear{background:none;border:none;cursor:pointer;font-size:12px;color:var(--text-3);padding:8px}
 
-.chat-messages{flex:1;overflow-y:auto;padding:20px 16px;
-  display:flex;flex-direction:column;gap:14px;-webkit-overflow-scrolling:touch}
+.chat-messages{flex:1;display:flex;flex-direction:column;gap:14px;padding-bottom:12px}
 
-.msg{display:flex;flex-direction:column;gap:3px;max-width:84%}
+.msg{display:flex;flex-direction:column;gap:3px;max-width:88%}
 .msg.user{align-self:flex-start;align-items:flex-start}
 .msg.assistant{align-self:flex-end;align-items:flex-end}
 
@@ -131,10 +202,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 .typing-dot span:nth-child(3){animation-delay:.4s}
 @keyframes blink{0%,80%,100%{opacity:.3;transform:scale(.85)}40%{opacity:1;transform:scale(1)}}
 
-/* ── INPUT ── */
-.chat-input-area{background:var(--card);border-top:1px solid var(--border);
-  padding:10px 16px;padding-bottom:max(10px,env(safe-area-inset-bottom));
-  display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.chat-input-area{background:var(--bg);padding-top:10px;flex-shrink:0}
 .input-row{display:flex;gap:8px;align-items:flex-end}
 .chat-textarea{flex:1;padding:11px 14px;border-radius:22px;border:1px solid var(--border);
   background:var(--input-bg);color:var(--text);font-size:15px;font-family:inherit;
@@ -161,8 +229,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
   <div class="api-box">
     <h2>חיבור ל-Claude</h2>
     <p>הכנס מפתח API של Anthropic פעם אחת — נשמר רק במכשיר שלך.</p>
-    <input class="api-input" id="apiInput" type="password" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false">
-    <button class="api-save" onclick="saveKey()">התחבר</button>
+    <form onsubmit="event.preventDefault();saveKey()">
+      <input class="api-input" id="apiInput" type="password" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false">
+      <button class="api-save" type="submit">התחבר</button>
+    </form>
     <span class="api-link">קבל מפתח ב-<a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></span>
   </div>
 </div>
@@ -171,7 +241,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 <div class="setup-screen" id="setupScreen">
   <div class="setup-box">
     <h2>🏝️ פרטי הטיול</h2>
-    <p>כמה פרטים כדי שהסוכן יתאים את העצות אליכם — אפשר לערוך בכל שלב.</p>
+    <p>כמה פרטים כדי שהסוכן, ההוצאות וההמלצות יתאימו אליכם — אפשר לערוך בכל שלב.</p>
 
     <span class="setup-field-label">תאריך יציאה</span>
     <input class="setup-input" id="setupStart" type="date">
@@ -195,6 +265,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
       <option value="גבוה">גבוה / נוחות</option>
     </select>
 
+    <span class="setup-field-label">תקציב כולל למשפחה בש״ח (אופציונלי, למעקב הוצאות)</span>
+    <input class="setup-input" id="setupBudgetTotal" type="number" min="0" placeholder="לדוגמה: 20000">
+
     <span class="setup-field-label">הערות נוספות (אופציונלי)</span>
     <input class="setup-input" id="setupNotes" type="text" placeholder="למשל: מעדיפים ים, לא אוהבים טיסות פנים">
 
@@ -202,63 +275,143 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
   </div>
 </div>
 
-<!-- HOME -->
-<div class="home" id="homePage">
-  <header class="header">
-    <p class="header-eyebrow">🌴 טיול משפחתי</p>
-    <h1>תאילנד, בקרוב</h1>
-    <p>הסוכן האישי לתכנון הטיול שלכם</p>
-  </header>
+<!-- APP -->
+<div id="app">
+  <div class="page-wrap">
 
-  <div class="trip-card">
-    <div class="trip-top">
-      <div class="trip-avatar">🧳</div>
-      <div>
-        <div class="trip-days" id="tripDays">— <span>ימים לטיול</span></div>
-        <div class="trip-sub" id="tripSub">עדיין לא הוגדרו פרטי טיול</div>
+    <!-- HOME -->
+    <div class="page" id="page-home">
+      <header class="header">
+        <p class="header-eyebrow">🌴 טיול משפחתי</p>
+        <h1>תאילנד, בקרוב</h1>
+      </header>
+
+      <div class="trip-card">
+        <div class="trip-top">
+          <div class="trip-avatar">🧳</div>
+          <div>
+            <div class="trip-days" id="tripDays">— <span>ימים לטיול</span></div>
+            <div class="trip-sub" id="tripSub"></div>
+          </div>
+        </div>
+        <div class="trip-footer">
+          <span class="teaser-text">טל מכיר את התאריכים, התקציב וההוצאות שלכם</span>
+          <button class="trip-edit" onclick="openSetup()">ערוך פרטי טיול</button>
+        </div>
+      </div>
+
+      <div class="teaser" onclick="switchTab('expenses')" role="button" tabindex="0">
+        <div>
+          <div class="stat-label">הוצאות עד כה</div>
+          <div class="stat-value" id="homeExpenseTotal" style="font-size:18px">₪0</div>
+        </div>
+        <span class="teaser-arrow">↗</span>
+      </div>
+      <div class="teaser" onclick="switchTab('nearby')" role="button" tabindex="0">
+        <div class="teaser-text">📍 מה כדאי לעשות ואיפה לאכול לידכם עכשיו</div>
+        <span class="teaser-arrow">↗</span>
+      </div>
+
+      <p class="section-label">שווה לדעת</p>
+      <div class="fact-grid">
+        <div class="fact"><span class="fact-icon">🛂</span><span class="fact-title">ויזה</span>
+          <span class="fact-body">ישראלים פטורים מוויזה לשהייה קצרה. חשוב לוודא שהדרכון בתוקף ל-6 חודשים לפחות.</span></div>
+        <div class="fact"><span class="fact-icon">🌦️</span><span class="fact-title">מזג אוויר</span>
+          <span class="fact-body">אוגוסט הוא עונת הגשמים ברוב האזורים — לרוב ממטרים קצרים. החוף המזרחי (קו סמוי) יבש יותר אז.</span></div>
+        <div class="fact"><span class="fact-icon">💱</span><span class="fact-title">מטבע</span>
+          <span class="fact-body">באט תאילנדי (THB). כרטיס אשראי ללא עמלות חו״ל + מזומן קטן לשווקים וטוקטוק.</span></div>
+        <div class="fact"><span class="fact-icon">🕐</span><span class="fact-title">שעון</span>
+          <span class="fact-body">תאילנד קדימה מישראל ב-5 שעות בקיץ.</span></div>
+      </div>
+
+      <p class="footer">הסוכן לטיול תאילנד · v2.0</p>
+    </div>
+
+    <!-- CHAT -->
+    <div class="page" id="page-chat">
+      <div class="chat-header">
+        <div class="chat-avatar-h">🌴</div>
+        <div class="chat-header-info">
+          <div class="chat-header-name">טל</div>
+          <div class="chat-header-role">מתכנן טיול תאילנד</div>
+        </div>
+        <button class="chat-clear" onclick="clearChat()">נקה</button>
+      </div>
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-input-area">
+        <div class="input-row">
+          <textarea class="chat-textarea" id="chatInput" placeholder="כתוב הודעה..." rows="1"
+            onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+          <button class="chat-send" id="sendBtn" onclick="sendMessage()">↑</button>
+        </div>
       </div>
     </div>
-    <div class="trip-desc">דברו עם טל, מומחה לתכנון טיולים משפחתיים לתאילנד — מסלול, טיסות, מלונות, תקציב, ויזה ופעילויות לילדים, מותאם בדיוק לתאריכים ולמשפחה שלכם.</div>
-    <div class="trip-footer">
-      <button class="trip-cta" onclick="openChat()">שוחח עם טל ↗</button>
-      <button class="trip-edit" onclick="openSetup()">ערוך פרטי טיול</button>
+
+    <!-- EXPENSES -->
+    <div class="page" id="page-expenses">
+      <header class="header" style="padding-top:4px">
+        <h1 style="font-size:24px">💰 הוצאות</h1>
+      </header>
+
+      <div class="stat-row">
+        <div class="stat-tile">
+          <div class="stat-label">הוצאתם עד כה</div>
+          <div class="stat-value" id="expTotal">₪0</div>
+        </div>
+        <div class="stat-tile">
+          <div class="stat-label" id="expRemainLabel">נשאר בתקציב</div>
+          <div class="stat-value" id="expRemain">—</div>
+        </div>
+      </div>
+
+      <p class="section-label">לפי קטגוריה</p>
+      <div class="cat-list" id="catList"></div>
+
+      <p class="section-label">הוספת הוצאה</p>
+      <div class="exp-form">
+        <div class="exp-row">
+          <input class="exp-input exp-amount" id="expAmount" type="number" min="0" step="0.01" placeholder="סכום">
+          <select class="exp-select exp-currency" id="expCurrency">
+            <option value="THB">฿ באט</option>
+            <option value="ILS">₪ שקל</option>
+          </select>
+          <select class="exp-select exp-cat" id="expCategory"></select>
+        </div>
+        <input class="exp-input exp-note" id="expNote" type="text" placeholder="הערה (אופציונלי)">
+        <button class="exp-add-btn" onclick="addExpense()">➕ הוסף הוצאה</button>
+        <div class="fx-row">
+          <span>שער המרה: 1 ฿ =</span>
+          <input id="fxRateInput" type="number" min="0" step="0.001" onchange="saveFxRate()">
+          <span>₪ (אפשר לערוך)</span>
+        </div>
+      </div>
+
+      <p class="section-label">היסטוריה</p>
+      <div class="exp-list" id="expList"></div>
     </div>
+
+    <!-- NEARBY -->
+    <div class="page" id="page-nearby">
+      <header class="header" style="padding-top:4px">
+        <h1 style="font-size:24px">📍 בסביבה</h1>
+        <p>המלצות AI לפי המיקום, השעה והמשפחה שלכם — כדאי לוודא שעות פתיחה במפות</p>
+      </header>
+
+      <div class="nearby-actions">
+        <button class="nearby-btn" onclick="fetchNearby(true)">🔎 מה בסביבה עכשיו</button>
+      </div>
+      <div class="nearby-status" id="nearbyStatus">לחצו כדי לשתף מיקום ולקבל המלצות קרובות.</div>
+      <div class="nearby-list" id="nearbyList"></div>
+    </div>
+
   </div>
 
-  <p class="section-label">שווה לדעת</p>
-  <div class="fact-grid">
-    <div class="fact"><span class="fact-icon">🛂</span><span class="fact-title">ויזה</span>
-      <span class="fact-body">ישראלים פטורים מוויזה לשהייה קצרה. חשוב לוודא שהדרכון בתוקף ל-6 חודשים לפחות.</span></div>
-    <div class="fact"><span class="fact-icon">🌦️</span><span class="fact-title">מזג אוויר</span>
-      <span class="fact-body">אוגוסט הוא עונת הגשמים ברוב האזורים — לרוב ממטרים קצרים, לא רצוף. החוף המזרחי (קו סמוי) יבש יותר אז.</span></div>
-    <div class="fact"><span class="fact-icon">💱</span><span class="fact-title">מטבע</span>
-      <span class="fact-body">באט תאילנדי (THB). כדאי כרטיס אשראי ללא עמלות חו״ל + מזומן קטן לשווקים וטוקטוק.</span></div>
-    <div class="fact"><span class="fact-icon">🕐</span><span class="fact-title">שעון</span>
-      <span class="fact-body">תאילנד קדימה מישראל ב-5 שעות בקיץ (ללא שעון קיץ מקומי).</span></div>
-  </div>
-
-  <p class="footer">הסוכן לטיול תאילנד · v1.0</p>
-</div>
-
-<!-- CHAT -->
-<div class="chat-overlay" id="chatOverlay">
-  <div class="chat-header">
-    <button class="chat-back" onclick="closeChat()">←</button>
-    <div class="chat-avatar-h">🌴</div>
-    <div class="chat-header-info">
-      <div class="chat-header-name">טל</div>
-      <div class="chat-header-role">מתכנן טיול תאילנד</div>
-    </div>
-    <button class="chat-clear" onclick="clearChat()">נקה</button>
-  </div>
-  <div class="chat-messages" id="chatMessages"></div>
-  <div class="chat-input-area">
-    <div class="input-row">
-      <textarea class="chat-textarea" id="chatInput" placeholder="כתוב הודעה..." rows="1"
-        onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-      <button class="chat-send" id="sendBtn" onclick="sendMessage()">↑</button>
-    </div>
-  </div>
+  <nav class="tabbar">
+    <button class="tab-btn" data-tab="home" onclick="switchTab('home')"><span class="tab-icon">🏠</span><span>בית</span></button>
+    <button class="tab-btn" data-tab="chat" onclick="switchTab('chat')"><span class="tab-icon">💬</span><span>טל</span></button>
+    <button class="tab-btn" data-tab="expenses" onclick="switchTab('expenses')"><span class="tab-icon">💰</span><span>הוצאות</span></button>
+    <button class="tab-btn" data-tab="nearby" onclick="switchTab('nearby')"><span class="tab-icon">📍</span><span>בסביבה</span></button>
+  </nav>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -267,9 +420,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 const KEY_STORAGE='thai_ant_key';
 const TRIP_STORAGE='thai_trip_info';
 const CHAT_STORAGE='thai_chat_history';
+const EXPENSES_STORAGE='thai_expenses';
+const FX_STORAGE='thai_fx_rate';
+const NEARBY_STORAGE='thai_nearby_cache';
+const DEFAULT_FX=0.11;
 
-let messages=[], isStreaming=false;
+const CATEGORIES=[
+  {id:'food',label:'אוכל',icon:'🍜',color:'--cat-food'},
+  {id:'transport',label:'תחבורה',icon:'🚗',color:'--cat-transport'},
+  {id:'stay',label:'לינה',icon:'🏨',color:'--cat-stay'},
+  {id:'activities',label:'פעילויות',icon:'🎟️',color:'--cat-activities'},
+  {id:'shopping',label:'קניות',icon:'🛍️',color:'--cat-shopping'},
+  {id:'other',label:'אחר',icon:'📦',color:'--cat-other'}
+];
 
+let messages=[], isStreaming=false, chatInitialized=false;
+
+function escapeHtml(s){
+  const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML;
+}
+
+/* ── KEY / SETUP ── */
 function getKey(){return localStorage.getItem(KEY_STORAGE)}
 function saveKey(){
   const k=document.getElementById('apiInput').value.trim();
@@ -282,14 +453,13 @@ function checkKey(){
   if(!getKey()){document.getElementById('apiScreen').classList.add('visible');return false}
   return true;
 }
-
 function getTrip(){
   const raw=localStorage.getItem(TRIP_STORAGE);
   return raw?JSON.parse(raw):null;
 }
 function checkSetup(){
   if(!getKey())return;
-  if(!getTrip()){openSetup()}else{renderHome()}
+  if(!getTrip()){openSetup()}else{initApp()}
 }
 function openSetup(){
   const t=getTrip();
@@ -300,6 +470,7 @@ function openSetup(){
     document.getElementById('setupKids').value=t.kids||'';
     document.getElementById('setupAdults').value=t.adults||2;
     document.getElementById('setupBudget').value=t.budget||'בינוני';
+    document.getElementById('setupBudgetTotal').value=t.budgetTotal||'';
     document.getElementById('setupNotes').value=t.notes||'';
   }
   document.getElementById('setupScreen').classList.add('visible');
@@ -314,13 +485,40 @@ function saveSetup(){
     kids:document.getElementById('setupKids').value.trim(),
     adults:document.getElementById('setupAdults').value||2,
     budget:document.getElementById('setupBudget').value,
+    budgetTotal:document.getElementById('setupBudgetTotal').value||'',
     notes:document.getElementById('setupNotes').value.trim()
   };
   localStorage.setItem(TRIP_STORAGE,JSON.stringify(trip));
   document.getElementById('setupScreen').classList.remove('visible');
-  renderHome();
+  initApp();
 }
 
+function initApp(){
+  document.getElementById('app').classList.add('visible');
+  const catSel=document.getElementById('expCategory');
+  if(!catSel.options.length){
+    CATEGORIES.forEach(c=>{
+      const o=document.createElement('option'); o.value=c.id; o.textContent=`${c.icon} ${c.label}`;
+      catSel.appendChild(o);
+    });
+  }
+  document.getElementById('fxRateInput').value=getFxRate();
+  switchTab('home');
+  renderExpenses();
+  const cachedNearby=localStorage.getItem(NEARBY_STORAGE);
+  if(cachedNearby){try{renderNearby(JSON.parse(cachedNearby))}catch{}}
+}
+
+function switchTab(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));
+  if(name==='home')renderHome();
+  if(name==='expenses')renderExpenses();
+  if(name==='chat'&&!chatInitialized)initChat();
+}
+
+/* ── HOME ── */
 function renderHome(){
   const t=getTrip();
   if(!t)return;
@@ -330,35 +528,234 @@ function renderHome(){
   else if(days===0)daysEl.innerHTML=`היום! <span>יוצאים לדרך</span>`;
   else daysEl.innerHTML=`בדרך <span>מקווים שנהנים!</span>`;
 
-  const parts=[];
-  parts.push(`יציאה מ-${t.city}`);
+  const parts=[`יציאה מ-${t.city}`];
   if(t.kids)parts.push(`ילדים בגילאי ${t.kids}`);
   parts.push(`${t.adults} מבוגרים`);
   document.getElementById('tripSub').textContent=parts.join(' · ');
+
+  document.getElementById('homeExpenseTotal').textContent=formatILS(totalExpensesILS());
 }
 
+/* ── EXPENSES ── */
+function getExpenses(){
+  const raw=localStorage.getItem(EXPENSES_STORAGE);
+  return raw?JSON.parse(raw):[];
+}
+function saveExpenses(list){localStorage.setItem(EXPENSES_STORAGE,JSON.stringify(list))}
+function getFxRate(){return Number(localStorage.getItem(FX_STORAGE)||DEFAULT_FX)}
+function saveFxRate(){
+  const v=Number(document.getElementById('fxRateInput').value)||DEFAULT_FX;
+  localStorage.setItem(FX_STORAGE,v);
+  renderExpenses();
+}
+function toILS(amount,currency){return currency==='THB'?amount*getFxRate():amount}
+function formatILS(n){return '₪'+Math.round(n).toLocaleString('he-IL')}
+function totalExpensesILS(){return getExpenses().reduce((s,e)=>s+toILS(e.amount,e.currency),0)}
+
+function addExpense(){
+  const amount=Number(document.getElementById('expAmount').value);
+  if(!amount||amount<=0){showToast('נא להזין סכום תקין');return}
+  const currency=document.getElementById('expCurrency').value;
+  const category=document.getElementById('expCategory').value;
+  const note=document.getElementById('expNote').value.trim();
+  const list=getExpenses();
+  list.push({id:Date.now()+Math.random(),amount,currency,category,note,date:new Date().toISOString().slice(0,10)});
+  saveExpenses(list);
+  document.getElementById('expAmount').value='';
+  document.getElementById('expNote').value='';
+  renderExpenses();
+  showToast('ההוצאה נוספה');
+}
+function deleteExpense(id){
+  saveExpenses(getExpenses().filter(e=>e.id!==id));
+  renderExpenses();
+}
+
+function renderExpenses(){
+  const list=getExpenses();
+  const total=totalExpensesILS();
+  document.getElementById('expTotal').textContent=formatILS(total);
+
+  const t=getTrip();
+  const budget=t&&t.budgetTotal?Number(t.budgetTotal):null;
+  const remainEl=document.getElementById('expRemain');
+  if(budget){
+    const remain=budget-total;
+    const sign=remain<0?'⚠️ -':'';
+    remainEl.textContent=sign+formatILS(Math.abs(remain));
+    remainEl.classList.toggle('critical',remain<0);
+    document.getElementById('expRemainLabel').textContent=remain<0?'חריגה מהתקציב':'נשאר בתקציב';
+  } else {
+    remainEl.textContent='לא הוגדר';
+    remainEl.classList.remove('critical');
+    document.getElementById('expRemainLabel').textContent='תקציב כולל';
+  }
+
+  // category breakdown
+  const byCat={};
+  list.forEach(e=>{byCat[e.category]=(byCat[e.category]||0)+toILS(e.amount,e.currency)});
+  const rows=CATEGORIES.map(c=>({...c,amount:byCat[c.id]||0})).filter(c=>c.amount>0)
+    .sort((a,b)=>b.amount-a.amount);
+  const max=rows.length?rows[0].amount:1;
+  const catList=document.getElementById('catList');
+  if(!rows.length){
+    catList.innerHTML='<div class="cat-empty">עדיין אין הוצאות רשומות</div>';
+  } else {
+    catList.innerHTML=rows.map(c=>`
+      <div class="cat-row">
+        <div class="cat-label"><span class="cat-dot" style="background:var(${c.color})"></span>${c.label}</div>
+        <div class="cat-track"><div class="cat-fill" style="width:${Math.max(4,Math.round(c.amount/max*100))}%;background:var(${c.color})"></div></div>
+        <div class="cat-amt">${formatILS(c.amount)}</div>
+      </div>`).join('');
+  }
+
+  // list
+  const expList=document.getElementById('expList');
+  if(!list.length){
+    expList.innerHTML='<div class="cat-empty">הוסיפו את ההוצאה הראשונה למעלה</div>';
+  } else {
+    const sorted=[...list].sort((a,b)=>b.id-a.id);
+    expList.innerHTML=sorted.map(e=>{
+      const cat=CATEGORIES.find(c=>c.id===e.category)||CATEGORIES[5];
+      const orig=e.currency==='THB'?`฿${e.amount.toLocaleString('he-IL')}`:`₪${e.amount.toLocaleString('he-IL')}`;
+      return `<div class="exp-item">
+        <span class="exp-icon">${cat.icon}</span>
+        <div class="exp-mid">
+          <div class="exp-cat-name">${cat.label}${e.note?' · '+escapeHtml(e.note):''}</div>
+          <div class="exp-date">${e.date}</div>
+        </div>
+        <div class="exp-right">
+          <div class="exp-sum">${orig}</div>
+          ${e.currency==='THB'?`<div class="exp-date">${formatILS(toILS(e.amount,e.currency))}</div>`:''}
+        </div>
+        <button class="exp-del" onclick="deleteExpense(${e.id})">✕</button>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('homeExpenseTotal').textContent=formatILS(total);
+}
+
+/* ── NEARBY ── */
+function timeLabel(){
+  const h=new Date().getHours();
+  if(h<11)return 'בוקר';
+  if(h<15)return 'צהריים';
+  if(h<18)return 'אחה"צ';
+  if(h<22)return 'ערב';
+  return 'לילה';
+}
+function timeSince(ts){
+  const mins=Math.round((Date.now()-ts)/60000);
+  if(mins<1)return 'עכשיו';
+  if(mins<60)return `לפני ${mins} דק'`;
+  return `לפני ${Math.round(mins/60)} שעות`;
+}
+function setNearbyStatus(text){document.getElementById('nearbyStatus').textContent=text}
+
+function fetchNearby(force){
+  if(!checkKey())return;
+  if(!navigator.geolocation){setNearbyStatus('הדפדפן לא תומך במיקום');return}
+  setNearbyStatus('מאתר מיקום...');
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const lat=pos.coords.latitude, lng=pos.coords.longitude;
+    setNearbyStatus('מזהה איפה אתם...');
+    let placeName='המיקום שלכם';
+    try{
+      const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14&accept-language=he`);
+      const j=await r.json();
+      if(j&&j.address){
+        placeName=[j.address.suburb||j.address.town||j.address.city||j.address.village,j.address.state||j.address.country]
+          .filter(Boolean).join(', ');
+      } else if(j&&j.display_name){placeName=j.display_name}
+    }catch{}
+    setNearbyStatus('טל בוחר המלצות...');
+    try{
+      const items=await getRecommendations(lat,lng,placeName);
+      const data={placeName,lat,lng,items,ts:Date.now()};
+      localStorage.setItem(NEARBY_STORAGE,JSON.stringify(data));
+      renderNearby(data);
+    }catch(e){
+      setNearbyStatus('שגיאה: '+e.message);
+    }
+  },()=>{
+    setNearbyStatus('לא הצלחנו לגשת למיקום. ודאו שנתתם הרשאת מיקום לדפדפן/לאתר.');
+  },{enableHighAccuracy:false,timeout:12000});
+}
+
+async function getRecommendations(lat,lng,placeName){
+  const t=getTrip()||{};
+  const sys=`אתה עוזר המלצות מקומי לתייר בתאילנד. תמיד תחזיר JSON תקין בלבד, ללא שום טקסט מחוץ ל-JSON — מערך של עד 5 אובייקטים בפורמט:
+[{"name":"שם המקום/הפעילות","type":"restaurant","reason":"משפט קצר בעברית"},...]
+type הוא "restaurant" או "activity" בלבד. searchQuery הוא מחרוזת חיפוש קצרה באנגלית (שם + סוג מקום) שתשמש לחיפוש בגוגל מפות.`;
+  const userMsg=`מיקום נוכחי: ${placeName} (קואורדינטות ${lat.toFixed(3)},${lng.toFixed(3)}).
+זמן ביום: ${timeLabel()}.
+המשפחה: ${t.adults||2} מבוגרים${t.kids?`, ילדים בגילאי ${t.kids}`:''}. רמת תקציב: ${t.budget||'בינוני'}.
+תן עד 5 המלצות קרובות ורלוונטיות ממש עכשיו — גם מקומות אוכל וגם פעילויות, מתאימות למשפחה.`;
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'x-api-key':getKey(),'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true','content-type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:800,system:sys,messages:[{role:'user',content:userMsg}]})
+  });
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`Error ${res.status}`)}
+  const data=await res.json();
+  let items=[];
+  try{items=JSON.parse(data.content[0].text.trim())}catch{throw new Error('תשובה לא תקינה, נסו שוב')}
+  return items;
+}
+
+function renderNearby(data){
+  setNearbyStatus(`📍 ${data.placeName} · עודכן ${timeSince(data.ts)}`);
+  const wrap=document.getElementById('nearbyList'); wrap.innerHTML='';
+  (data.items||[]).forEach(it=>{
+    const card=document.createElement('div'); card.className='nearby-card';
+    const q=it.searchQuery||it.name||'';
+    const mapUrl=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q+' near '+data.lat+','+data.lng)}`;
+    card.innerHTML=`<div class="nearby-top"><span class="nearby-icon">${it.type==='restaurant'?'🍜':'🎯'}</span><span class="nearby-name">${escapeHtml(it.name)}</span></div>
+      <div class="nearby-reason">${escapeHtml(it.reason||'')}</div>
+      <a class="nearby-link" href="${mapUrl}" target="_blank" rel="noopener">פתח במפות ↗</a>`;
+    wrap.appendChild(card);
+  });
+}
+
+/* ── CHAT ── */
 function buildSystemPrompt(){
   const t=getTrip()||{};
   const days=t.start?Math.ceil((new Date(t.start)-new Date(new Date().toDateString()))/86400000):null;
-  let ctx=`פרטי המשפחה והטיול:\n- תאריך יציאה: ${t.start||'לא ידוע'}${days!==null?` (בעוד ${days} ימים)`:''}\n- תאריך חזרה: ${t.end||'לא צוין'}\n- עיר יציאה: ${t.city||'לא צוין'}\n- מבוגרים: ${t.adults||'לא צוין'}\n- ילדים: ${t.kids||'אין / לא צוין'}\n- רמת תקציב: ${t.budget||'לא צוין'}\n- הערות: ${t.notes||'אין'}`;
+  let ctx=`פרטי המשפחה והטיול:
+- תאריך יציאה: ${t.start||'לא ידוע'}${days!==null?` (בעוד ${days} ימים)`:''}
+- תאריך חזרה: ${t.end||'לא צוין'}
+- עיר יציאה: ${t.city||'לא צוין'}
+- מבוגרים: ${t.adults||'לא צוין'}
+- ילדים: ${t.kids||'אין / לא צוין'}
+- רמת תקציב: ${t.budget||'לא צוין'}
+- הערות: ${t.notes||'אין'}`;
 
-  return `אתה טל, מומחה לתכנון טיולים משפחתיים לתאילנד. אתה עוזר למשפחה ספציפית שנתוני הטיול שלה מפורטים למטה — התאם את כל התשובות אליהם ואל תשאל שוב על פרטים שכבר סופקו.
+  const list=getExpenses();
+  if(list.length){
+    const total=totalExpensesILS();
+    const budget=t.budgetTotal?Number(t.budgetTotal):null;
+    ctx+=`\n\nהוצאות בפועל עד כה: ${formatILS(total)}${budget?` מתוך תקציב כולל ${formatILS(budget)} (${total>budget?'חריגה של '+formatILS(total-budget):'נותרו '+formatILS(budget-total)})`:''}.`;
+  }
+  const cachedNearby=localStorage.getItem(NEARBY_STORAGE);
+  if(cachedNearby){
+    try{const c=JSON.parse(cachedNearby); ctx+=`\n\nהמיקום האחרון הידוע של המשפחה: ${c.placeName}.`}catch{}
+  }
+
+  return `אתה טל, מומחה לתכנון טיולים משפחתיים לתאילנד. אתה עוזר למשפחה ספציפית שנתוני הטיול שלה מפורטים למטה, כולל הוצאות בפועל ומיקום אחרון ידוע כשקיימים — התאם את כל התשובות אליהם ואל תשאל שוב על פרטים שכבר סופקו. אם רלוונטי לשאלה, התייחס למצב התקציב בפועל.
 
 ${ctx}
 
 הקשר עונתי: אם היציאה בסביבות אוגוסט — זו עונת הגשמים ("green season") ברוב האזורים, חוץ מהחוף המזרחי (קו סמוי/קו פנגן/קו טאו) שיחסית יבש אז.
 
-מומחיות: בניית מסלול יום-יום, טיסות (כולל טיסות פנים כמו AirAsia/Nok Air/Bangkok Airways), מלונות ואזורי לינה מתאימים למשפחות עם ילדים, תחבורה מקומית (Grab, רכבות, טוקטוק, טרנספר פרטי), אזורים מומלצים (בנגקוק, צ'אנג מאי, קרבי/פוקט, קו סמוי), תקציב יומי למשפחה (בהט ובשקלים), פעילויות לילדים (בריכות, ספארי, אקווריום, פארקי מים, שנורקלינג), אוכל בטוח לילדים, ביגוד וציוד לפי עונה, ויזה (ישראלים פטורים משהייה קצרה — לוודא תוקף דרכון 6 חודשים), ביטוח נסיעות, בריאות (חיסונים לרוב לא חובה, כדאי להתייעץ עם רופא נסיעות, ערכת תרופות, קרם הגנה, דוחה יתושים).
+מומחיות: בניית מסלול יום-יום, טיסות, מלונות ואזורי לינה מתאימים למשפחות עם ילדים, תחבורה מקומית, אזורים מומלצים (בנגקוק, צ'אנג מאי, קרבי/פוקט, קו סמוי), תקציב יומי למשפחה, פעילויות לילדים, אוכל בטוח לילדים, ביגוד וציוד לפי עונה, ויזה, ביטוח נסיעות ובריאות.
 
 ענה בעברית, מעשי וקונקרטי — הצע מסלול מובנה עם ימים ומקומות וטווחי מחירים כשרלוונטי.`;
 }
 
-function openChat(){
-  if(!checkKey())return;
-  if(!getTrip()){openSetup();return}
-  document.getElementById('chatOverlay').classList.add('open');
-  document.body.style.overflow='hidden';
-
+function initChat(){
+  chatInitialized=true;
   const saved=localStorage.getItem(CHAT_STORAGE);
   document.getElementById('chatMessages').innerHTML='';
   if(saved){
@@ -367,7 +764,6 @@ function openChat(){
   } else {
     greet();
   }
-  setTimeout(()=>document.getElementById('chatInput').focus(),100);
 }
 function greet(){
   const t=getTrip()||{};
@@ -376,32 +772,28 @@ function greet(){
   messages=[{role:'assistant',content:greeting}];
   saveMessages();
 }
-
-function closeChat(){
-  document.getElementById('chatOverlay').classList.remove('open');
-  document.body.style.overflow='';
-}
 function clearChat(){
   localStorage.removeItem(CHAT_STORAGE);
   document.getElementById('chatMessages').innerHTML='';
   greet();
 }
-function saveMessages(){
-  localStorage.setItem(CHAT_STORAGE,JSON.stringify(messages.slice(-40)));
-}
+function saveMessages(){localStorage.setItem(CHAT_STORAGE,JSON.stringify(messages.slice(-40)))}
 
 function addBubble(role,text){
   const wrap=document.getElementById('chatMessages');
   const msg=document.createElement('div'); msg.className=`msg ${role}`;
   const b=document.createElement('div'); b.className='bubble'; b.textContent=text;
-  msg.appendChild(b); wrap.appendChild(msg); wrap.scrollTop=wrap.scrollHeight;
+  msg.appendChild(b); wrap.appendChild(msg);
+  document.getElementById('page-chat').scrollTop=document.getElementById('page-chat').scrollHeight;
   return b;
 }
 function addTyping(){
   const wrap=document.getElementById('chatMessages');
   const d=document.createElement('div'); d.className='msg assistant';
   d.innerHTML='<div class="bubble"><div class="typing-dot"><span></span><span></span><span></span></div></div>';
-  wrap.appendChild(d); wrap.scrollTop=wrap.scrollHeight; return d;
+  wrap.appendChild(d);
+  document.getElementById('page-chat').scrollTop=document.getElementById('page-chat').scrollHeight;
+  return d;
 }
 
 function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}}
@@ -418,7 +810,6 @@ async function callClaude(systemPrompt,msgs,maxTokens=2048){
   return res;
 }
 async function streamResponse(res,bubble){
-  const wrap=document.getElementById('chatMessages');
   const reader=res.body.getReader(); const dec=new TextDecoder(); let full='';
   while(true){
     const{done,value}=await reader.read(); if(done)break;
@@ -426,7 +817,13 @@ async function streamResponse(res,bubble){
     for(const line of lines){
       if(!line.startsWith('data: '))continue;
       const data=line.slice(6).trim(); if(data==='[DONE]')continue;
-      try{const j=JSON.parse(data);if(j.type==='content_block_delta'&&j.delta?.text){full+=j.delta.text;bubble.textContent=full;wrap.scrollTop=wrap.scrollHeight}}catch{}
+      try{
+        const j=JSON.parse(data);
+        if(j.type==='content_block_delta'&&j.delta?.text){
+          full+=j.delta.text;bubble.textContent=full;
+          document.getElementById('page-chat').scrollTop=document.getElementById('page-chat').scrollHeight;
+        }
+      }catch{}
     }
   }
   return full;
