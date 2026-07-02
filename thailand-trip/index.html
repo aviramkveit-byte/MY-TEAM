@@ -8,6 +8,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="טיול תאילנד">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" href="icons/icon-192.png">
 <title>הסוכן לטיול תאילנד</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -247,16 +250,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 </head>
 <body>
 
-<!-- API KEY -->
+<!-- API KEY / ACCESS CODE -->
 <div class="api-screen" id="apiScreen">
   <div class="api-box">
-    <h2>חיבור ל-Claude</h2>
-    <p>הכנס מפתח API של Anthropic פעם אחת — נשמר רק במכשיר שלך.</p>
+    <h2 id="apiScreenTitle">חיבור ל-Claude</h2>
+    <p id="apiScreenDesc">הכנס מפתח API של Anthropic פעם אחת — נשמר רק במכשיר שלך.</p>
     <form onsubmit="event.preventDefault();saveKey()">
       <input class="api-input" id="apiInput" type="password" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false">
       <button class="api-save" type="submit">התחבר</button>
     </form>
-    <span class="api-link">קבל מפתח ב-<a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></span>
+    <span class="api-link" id="apiScreenLink">קבל מפתח ב-<a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a></span>
   </div>
 </div>
 
@@ -454,6 +457,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 <div class="toast" id="toast"></div>
 
 <script>
+// Group mode: set to your deployed proxy worker URL (see thailand-trip/backend/)
+// to route requests through a shared backend with a group access code instead of
+// each person's own Anthropic API key. Leave empty for personal-key mode (default).
+const PROXY_URL='';
+const GROUP_MODE=!!PROXY_URL;
+
 const KEY_STORAGE='thai_ant_key';
 const PROFILES_STORAGE='thai_profiles';
 const ACTIVE_PROFILE_STORAGE='thai_active_profile';
@@ -569,9 +578,31 @@ function switchProfile(id,isNew){
 
 /* ── KEY / SETUP ── */
 function getKey(){return localStorage.getItem(KEY_STORAGE)}
+function apiEndpoint(){return GROUP_MODE?PROXY_URL.replace(/\/$/,'')+'/v1/messages':'https://api.anthropic.com/v1/messages'}
+function apiHeaders(){
+  return GROUP_MODE
+    ? {'x-access-code':getKey(),'content-type':'application/json'}
+    : {'x-api-key':getKey(),'anthropic-version':'2023-06-01',
+       'anthropic-dangerous-direct-browser-access':'true','content-type':'application/json'};
+}
+async function throwApiError(res){
+  const e=await res.json().catch(()=>({}));
+  const err=new Error(e.error?.message||`Error ${res.status}`);
+  err.status=res.status;
+  throw err;
+}
+function setupKeyScreenText(){
+  if(!GROUP_MODE)return;
+  document.getElementById('apiScreenTitle').textContent='קוד גישה קבוצתי';
+  document.getElementById('apiScreenDesc').textContent='הכניסו את קוד הגישה שקיבלתם ממארגן הטיול — נשמר רק במכשיר שלכם.';
+  document.getElementById('apiInput').placeholder='קוד גישה';
+  document.getElementById('apiScreenLink').style.display='none';
+}
 function saveKey(){
   const k=document.getElementById('apiInput').value.trim();
-  if(!k.startsWith('sk-ant')){showToast('מפתח לא תקין');return}
+  if(GROUP_MODE){
+    if(!k){showToast('נא להזין קוד גישה');return}
+  } else if(!k.startsWith('sk-ant')){showToast('מפתח לא תקין');return}
   localStorage.setItem(KEY_STORAGE,k);
   document.getElementById('apiScreen').classList.remove('visible');
   ensureProfile();
@@ -579,6 +610,7 @@ function saveKey(){
   checkSetup();
 }
 function checkKey(){
+  setupKeyScreenText();
   if(!getKey()){document.getElementById('apiScreen').classList.add('visible');return false}
   return true;
 }
@@ -820,13 +852,12 @@ type הוא "restaurant" או "activity" בלבד. searchQuery הוא מחרוז
 זמן ביום: ${timeLabel()}.
 המשפחה: ${t.adults||2} מבוגרים${t.kids?`, ילדים בגילאי ${t.kids}`:''}. רמת תקציב: ${t.budget||'בינוני'}.
 תן עד 5 המלצות קרובות ורלוונטיות ממש עכשיו — גם מקומות אוכל וגם פעילויות, מתאימות למשפחה.`;
-  const res=await fetch('https://api.anthropic.com/v1/messages',{
+  const res=await fetch(apiEndpoint(),{
     method:'POST',
-    headers:{'x-api-key':getKey(),'anthropic-version':'2023-06-01',
-      'anthropic-dangerous-direct-browser-access':'true','content-type':'application/json'},
+    headers:apiHeaders(),
     body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:800,system:sys,messages:[{role:'user',content:userMsg}]})
   });
-  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`Error ${res.status}`)}
+  if(!res.ok){await throwApiError(res)}
   const data=await res.json();
   let items=[];
   try{items=JSON.parse(data.content[0].text.trim())}catch{throw new Error('תשובה לא תקינה, נסו שוב')}
@@ -928,13 +959,12 @@ function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMe
 function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px'}
 
 async function callClaude(systemPrompt,msgs,maxTokens=2048){
-  const res=await fetch('https://api.anthropic.com/v1/messages',{
+  const res=await fetch(apiEndpoint(),{
     method:'POST',
-    headers:{'x-api-key':getKey(),'anthropic-version':'2023-06-01',
-      'anthropic-dangerous-direct-browser-access':'true','content-type':'application/json'},
+    headers:apiHeaders(),
     body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:maxTokens,system:systemPrompt,messages:msgs,stream:true})
   });
-  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`Error ${res.status}`)}
+  if(!res.ok){await throwApiError(res)}
   return res;
 }
 async function streamResponse(res,bubble){
@@ -979,7 +1009,7 @@ async function sendMessage(){
     saveMessages();
   }catch(e){
     addBubble('assistant',`שגיאה: ${e.message}`);
-    if(e.message.includes('401')||e.message.includes('auth')){localStorage.removeItem(KEY_STORAGE);setTimeout(checkKey,1000)}
+    if(e.status===401){localStorage.removeItem(KEY_STORAGE);setTimeout(checkKey,1000)}
   }
   isStreaming=false; document.getElementById('sendBtn').disabled=false;
   document.getElementById('chatInput').focus();
@@ -991,6 +1021,7 @@ function showToast(msg){
 }
 
 if(checkKey()){ensureProfile();renderProfileBar();checkSetup()}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
 </script>
 </body>
 </html>
